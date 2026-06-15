@@ -6,6 +6,8 @@ export interface TranscriptEvent {
   readonly ts: number;
   /** true only for an assistant message that is NOT a tool_use (turn boundary) */
   readonly isFinalAssistant: boolean;
+  /** human-readable text of the message, when present (for the inspector) */
+  readonly text?: string;
 }
 
 export type InjectStrategyKind = 'tty' | 'clipboard';
@@ -31,11 +33,17 @@ export interface AgentAdapter {
   /** Locate the active transcript for a session running at `cwd`. */
   locateTranscript(cwd: string): Promise<string | null>;
 
+  /** All candidate transcripts for `cwd`, newest first (concurrent sessions). */
+  listTranscripts(cwd: string): Promise<readonly string[]>;
+
   /** Stable session id derived from the transcript path (uuid / rollout id). */
   sessionId(transcriptPath: string | null, pid: number): string;
 
   /** Parse one raw JSONL line; return null to ignore (noise, partial, meta). */
   parseLine(raw: string): TranscriptEvent | null;
+
+  /** Extract a session title/summary from a raw line, if it carries one. */
+  extractTitle(raw: string): string | null;
 
   /** Shape the outgoing body for this agent (e.g. append absolute file paths). */
   formatForInject(body: string, attachmentAbsPaths: readonly string[]): string;

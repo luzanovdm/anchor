@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { AgentAdapter, TranscriptEvent } from '@anchor/core';
-import { isRecord, newestRollout, parseTimestamp } from './jsonl.js';
+import { isRecord, listRolloutsByMtime, newestRollout, parseTimestamp } from './jsonl.js';
 
 /**
  * Codex adapter.
@@ -16,8 +16,11 @@ export class CodexAdapter implements AgentAdapter {
   readonly injectStrategies = ['clipboard', 'tty'] as const;
 
   async locateTranscript(_cwd: string): Promise<string | null> {
-    const root = join(homedir(), '.codex', 'sessions');
-    return newestRollout(root);
+    return newestRollout(join(homedir(), '.codex', 'sessions'));
+  }
+
+  async listTranscripts(_cwd: string): Promise<readonly string[]> {
+    return listRolloutsByMtime(join(homedir(), '.codex', 'sessions'));
   }
 
   sessionId(transcriptPath: string | null, pid: number): string {
@@ -38,11 +41,27 @@ export class CodexAdapter implements AgentAdapter {
       return { role: 'tool', ts, isFinalAssistant: false };
     }
     if (role === 'assistant' || type === 'message') {
-      return { role: 'assistant', ts, isFinalAssistant: role === 'assistant' };
+      const text = codexText(obj);
+      return {
+        role: 'assistant',
+        ts,
+        isFinalAssistant: role === 'assistant',
+        ...(text.length > 0 ? { text } : {}),
+      };
     }
     if (role === 'user') {
-      return { role: 'user', ts, isFinalAssistant: false };
+      const text = codexText(obj);
+      return { role: 'user', ts, isFinalAssistant: false, ...(text.length > 0 ? { text } : {}) };
     }
+    return null;
+  }
+
+  extractTitle(raw: string): string | null {
+    const obj: unknown = JSON.parse(raw);
+    if (!isRecord(obj)) return null;
+    const payload = obj['payload'];
+    if (isRecord(payload) && typeof payload['title'] === 'string') return payload['title'];
+    if (typeof obj['title'] === 'string') return obj['title'];
     return null;
   }
 
@@ -55,6 +74,17 @@ export class CodexAdapter implements AgentAdapter {
 function stringField(obj: Record<string, unknown>, key: string): string | null {
   const value = obj[key];
   return typeof value === 'string' ? value : null;
+}
+
+/** Pull readable text from common Codex shapes (text / content / payload.text). */
+function codexText(obj: Record<string, unknown>): string {
+  const direct = obj['text'];
+  if (typeof direct === 'string') return direct.trim();
+  const content = obj['content'];
+  if (typeof content === 'string') return content.trim();
+  const payload = obj['payload'];
+  if (isRecord(payload) && typeof payload['text'] === 'string') return payload['text'].trim();
+  return '';
 }
 
 function nestedRole(obj: Record<string, unknown>): string | null {

@@ -124,6 +124,7 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
         key: session.key,
         agent: session.agent,
         cwd: session.cwd,
+        branch: session.branch,
         pid: session.pid,
         tty: ttyDevice(session.tty),
         transcriptPath: session.transcriptPath,

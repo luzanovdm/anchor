@@ -1,49 +1,82 @@
 <header class="head">
   <span class="title">Sessions</span>
-  <tt-badge>{{ sessions().length }}</tt-badge>
+  @if (sessions().length > 0) {
+    <span class="count">{{ idleCount() }} idle · {{ sessions().length }}</span>
+  }
 </header>
 
 @if (sessions().length === 0) {
-  <tt-empty-state
-    heading="No active sessions"
-    description="Start Claude Code or Codex in a terminal — it shows up here within two seconds."
-  />
+  <div class="empty">
+    <tt-empty-state
+      heading="No active sessions"
+      description="Start Claude Code or Codex in a terminal — it appears here within two seconds."
+    />
+  </div>
 } @else {
   <ul class="list">
     @for (session of sessions(); track session.key) {
-      <li class="row">
-        <div class="line">
-          <span class="agent">{{ session.agent }}</span>
-          <span class="project">{{ projectName(session) }}</span>
-          <tt-badge [variant]="stateTone(session)">{{ session.turnState }}</tt-badge>
-          @if (session.queued > 0) {
-            <button class="qcount" type="button" (click)="toggleQueue(session)">
-              queue {{ session.queued }}
-            </button>
-          }
-        </div>
+      <li>
+        <div
+          class="card"
+          [class.is-target]="session.key === target()"
+          (click)="select(session)"
+          (keydown.enter)="select(session)"
+          tabindex="0"
+          role="button"
+        >
+          <span class="dot" [class]="session.turnState"></span>
+          <div class="meta">
+            <div class="line">
+              <span class="agent">{{ session.agent }}</span>
+              <span class="project">{{ project(session) }}</span>
+              @if (session.branch; as b) {
+                <span class="branch">{{ b }}</span>
+              }
+              <span class="pid">#{{ session.pid }}</span>
+            </div>
+            <div class="sub">
+              <span class="state" [class]="session.turnState">{{ session.turnState }}</span>
+              <span class="path">{{ session.cwd }}</span>
+            </div>
+          </div>
 
-        <div class="actions">
-          <button class="gate" type="button" (click)="toggleGate(session)">
-            gate: {{ session.gate }}
-          </button>
-          <button ttButton variant="secondary" size="sm" (click)="sendNext(session)">
-            Send next
-          </button>
-          <button ttButton variant="primary" size="sm" (click)="send(session)">Send</button>
+          <div class="controls">
+            <button
+              class="gate"
+              type="button"
+              [class.is-auto]="session.gate === 'auto'"
+              (click)="toggleGate(session, $event)"
+              [title]="'Gate: ' + session.gate"
+            >
+              {{ session.gate }}
+            </button>
+            @if (session.queued > 0) {
+              <button class="qpill" type="button" (click)="toggleQueue(session, $event)">
+                {{ session.queued }} queued
+              </button>
+            }
+          </div>
         </div>
 
         @if (expanded() === session.key) {
           <ul class="queue">
             @for (entry of queue(); track entry.id) {
-              <li class="qrow" [class.is-sent]="entry.status !== 'queued'">
+              <li class="qrow" [class.is-done]="entry.status !== 'queued'">
                 <span class="qbody">{{ entry.body }}</span>
-                <tt-badge [variant]="entry.status === 'failed' ? 'danger' : 'default'">
-                  {{ entry.status }}
-                </tt-badge>
                 @if (entry.status === 'queued') {
-                  <button class="cancel" type="button" (click)="cancel(session, entry)">✕</button>
+                  <button class="cancel" type="button" (click)="cancel(session, entry, $event)">
+                    ✕
+                  </button>
+                } @else {
+                  <span class="qstatus" [class]="entry.status">{{ entry.status }}</span>
                 }
+              </li>
+            }
+            @if (session.gate === 'manual') {
+              <li class="qrow is-action">
+                <button class="sendnext" type="button" (click)="sendNext(session, $event)">
+                  Send next →
+                </button>
               </li>
             }
           </ul>

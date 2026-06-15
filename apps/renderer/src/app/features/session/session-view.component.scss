@@ -1,0 +1,247 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--tt-bg-primary);
+}
+
+.head {
+  position: relative;
+  flex: none;
+  padding: var(--tt-space-8) var(--tt-space-5) var(--tt-space-3);
+  border-bottom: 1px solid var(--tt-border-subtle);
+}
+
+.titlebar {
+  position: absolute;
+  inset: 0;
+  -webkit-app-region: drag;
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  -webkit-app-region: no-drag;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: var(--tt-text-base);
+  font-weight: var(--tt-font-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  font-size: var(--tt-text-2xs);
+}
+
+.agent {
+  font-weight: var(--tt-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tt-accent);
+}
+
+.proj {
+  color: var(--tt-text-secondary);
+}
+
+.branch,
+.pid {
+  font-family: var(--tt-font-mono);
+  color: var(--tt-text-tertiary);
+}
+
+.state {
+  margin-left: auto;
+  color: var(--tt-text-tertiary);
+}
+
+.state.idle {
+  color: var(--tt-success);
+}
+
+.state.working {
+  color: var(--tt-warning);
+}
+
+/* scrollable session feed fills the gap above the pinned composer */
+.feed {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--tt-space-4) var(--tt-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-5);
+}
+
+.label {
+  display: block;
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tt-text-tertiary);
+  margin-bottom: var(--tt-space-2);
+}
+
+.now .output {
+  margin: 0;
+  font-size: var(--tt-text-sm);
+  line-height: 1.55;
+  color: var(--tt-text-primary);
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-3);
+}
+
+.msg {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: var(--tt-space-3);
+  font-size: var(--tt-text-sm);
+  line-height: 1.5;
+}
+
+.role {
+  font-size: var(--tt-text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tt-text-tertiary);
+  padding-top: 2px;
+}
+
+.msg.assistant .role {
+  color: var(--tt-accent);
+}
+
+.text {
+  color: var(--tt-text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.msg.assistant .text {
+  color: var(--tt-text-primary);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-tertiary);
+}
+
+.qhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.ghint {
+  font-size: var(--tt-text-2xs);
+  color: var(--tt-text-tertiary);
+}
+
+.sendnext {
+  border: none;
+  background: var(--tt-accent-subtle);
+  color: var(--tt-accent);
+  padding: var(--tt-space-1) var(--tt-space-3);
+  border-radius: var(--tt-radius-sm);
+  font-size: var(--tt-text-xs);
+  cursor: pointer;
+}
+
+.qlist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-2);
+}
+
+.qitem {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-3);
+  padding: var(--tt-space-3);
+  border-radius: var(--tt-radius-sm);
+  background: var(--tt-bg-secondary);
+  border: 1px solid var(--tt-border-subtle);
+  font-size: var(--tt-text-sm);
+}
+
+.grip {
+  cursor: grab;
+  color: var(--tt-text-tertiary);
+  font-size: var(--tt-text-base);
+  line-height: 1;
+}
+
+.qbody {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--tt-text-secondary);
+}
+
+.cancel {
+  border: none;
+  background: transparent;
+  color: var(--tt-text-tertiary);
+  cursor: pointer;
+}
+
+.cancel:hover {
+  color: var(--tt-danger);
+}
+
+.qpreview {
+  padding: var(--tt-space-3);
+  border-radius: var(--tt-radius-sm);
+  background: var(--tt-bg-tertiary);
+  box-shadow: var(--tt-shadow-lg);
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-primary);
+}
+
+/* CDK drag affordances */
+.cdk-drag-placeholder {
+  opacity: 0.4;
+}
+
+.cdk-drag-animating {
+  transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.placeholder {
+  margin: auto;
+  text-align: center;
+  padding: var(--tt-space-8);
+}
+
+.placeholder .big {
+  font-size: var(--tt-text-base);
+  font-weight: var(--tt-font-medium);
+  color: var(--tt-text-secondary);
+  margin: 0 0 var(--tt-space-2);
+}
+
+.placeholder .small {
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-tertiary);
+  margin: 0;
+}

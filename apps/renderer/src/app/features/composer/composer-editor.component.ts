@@ -10,7 +10,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { EditorState } from '@codemirror/state';
-import { EditorView, keymap, drawSelection, highlightActiveLine } from '@codemirror/view';
+import {
+  EditorView,
+  keymap,
+  drawSelection,
+  highlightActiveLine,
+  placeholder,
+} from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
 
@@ -28,27 +34,35 @@ import { markdown } from '@codemirror/lang-markdown';
       :host,
       .host {
         display: block;
-        height: 100%;
       }
       .host :global(.cm-editor) {
-        height: 100%;
         font-family: var(--tt-font-mono);
         font-size: var(--tt-text-sm);
         background: transparent;
         color: var(--tt-text-primary);
       }
+      /* multi-line input: grows with content between a floor and a cap */
+      .host :global(.cm-scroller) {
+        min-height: 72px;
+        max-height: 240px;
+        overflow-y: auto;
+        line-height: 1.55;
+      }
       .host :global(.cm-editor.cm-focused) {
         outline: none;
       }
       .host :global(.cm-content) {
-        padding: var(--tt-space-4);
+        padding: var(--tt-space-3) var(--tt-space-4);
         caret-color: var(--tt-accent);
       }
       .host :global(.cm-activeLine) {
-        background: var(--tt-bg-hover);
+        background: transparent;
       }
       .host :global(.cm-selectionBackground) {
         background: var(--tt-accent-subtle) !important;
+      }
+      .host :global(.cm-placeholder) {
+        color: var(--tt-text-tertiary);
       }
     `,
   ],
@@ -61,6 +75,7 @@ export class ComposerEditorComponent {
   readonly initialDoc = input<string>('');
   readonly docChange = output<string>();
   readonly fileDropped = output<File>();
+  readonly submit = output<void>();
 
   constructor() {
     afterNextRender(() => this.mount());
@@ -101,8 +116,19 @@ export class ComposerEditorComponent {
         history(),
         drawSelection(),
         highlightActiveLine(),
-        keymap.of([...defaultKeymap, ...historyKeymap]),
+        keymap.of([
+          {
+            key: 'Mod-Enter',
+            run: () => {
+              this.submit.emit();
+              return true;
+            },
+          },
+          ...defaultKeymap,
+          ...historyKeymap,
+        ]),
         markdown(),
+        placeholder('Write a message…  ⌘↩ to send'),
         EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) this.docChange.emit(update.state.doc.toString());

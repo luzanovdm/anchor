@@ -21,6 +21,7 @@ const CH = {
   skillsList: 'skills:list',
   sessionsList: 'sessions:list',
   sessionsChanged: 'sessions:changed',
+  sessionsInspect: 'sessions:inspect',
   dispatchSend: 'dispatch:send',
   dispatchSendNext: 'dispatch:sendNext',
   dispatchSetGate: 'dispatch:setGate',
@@ -54,6 +55,7 @@ const bridge = {
       ipcRenderer.on(CH.sessionsChanged, listener);
       return () => ipcRenderer.removeListener(CH.sessionsChanged, listener);
     },
+    inspect: (sessionKey: string) => ipcRenderer.invoke(CH.sessionsInspect, sessionKey),
   },
   dispatch: {
     send: (sessionKey: string, draftId: string) =>

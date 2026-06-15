@@ -24,6 +24,7 @@ export function registerIpc(services: Services): void {
   handle(IPC.skillsList, () => services.listSkills());
 
   handle(IPC.sessionsList, () => services.listSessions());
+  handle(IPC.sessionsInspect, (key: unknown) => services.inspectSession(sessionKey(key)));
   handle(IPC.dispatchSend, (key: unknown, draftId: unknown) =>
     services.send(sessionKey(key), str(draftId)),
   );

@@ -3,16 +3,35 @@ productName: Anchor
 directories:
   output: release
   buildResources: build
+# main.js is ESM; override the packaged package.json entry + module type
+extraMetadata:
+  main: main.js
+  type: module
 files:
   - from: apps/main/dist
     to: .
-  - from: packages/core/dist
-    to: node_modules/@anchor/core/dist
-  - from: packages/adapters/dist
-    to: node_modules/@anchor/adapters/dist
+    filter:
+      - '**/*'
+      - '!**/*.map'
+      - '!**/.tsbuildinfo'
+  # vendor the workspace packages (dist + package.json) so `@anchor/*` resolves
+  - from: packages/core
+    to: node_modules/@anchor/core
+    filter:
+      - package.json
+      - 'dist/**/*'
+      - '!dist/**/*.map'
+  - from: packages/adapters
+    to: node_modules/@anchor/adapters
+    filter:
+      - package.json
+      - 'dist/**/*'
+      - '!dist/**/*.map'
 extraResources:
   - from: apps/renderer/dist/renderer
     to: renderer
+    filter:
+      - '**/*'
 mac:
   category: public.app-category.developer-tools
   target:

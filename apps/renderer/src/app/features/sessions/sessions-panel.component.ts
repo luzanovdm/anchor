@@ -1,52 +1,46 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import type { QueueEntry, SessionInfo, SessionKey } from '@anchor/core';
-import {
-  BadgeComponent,
-  ButtonComponent,
-  EmptyStateComponent,
-  type BadgeVariant,
-} from '@anchor/ui-kit';
-import { AnchorStore } from '../../core/anchor.store';
+import { EmptyStateComponent } from '@anchor/ui-kit';
+import { AnchorStore, projectName } from '../../core/anchor.store';
 import { anchor } from '../../core/anchor';
 
 @Component({
   selector: 'ac-sessions-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, BadgeComponent, EmptyStateComponent],
+  imports: [EmptyStateComponent],
   templateUrl: './sessions-panel.component.html',
   styleUrl: './sessions-panel.component.scss',
 })
 export class SessionsPanelComponent {
   private readonly store = inject(AnchorStore);
   readonly sessions = this.store.liveSessions;
+  readonly target = this.store.selectedTarget;
 
-  /** Per-session expanded queue cache, keyed by session key. */
   readonly expanded = signal<SessionKey | null>(null);
   readonly queue = signal<readonly QueueEntry[]>([]);
 
-  projectName(session: SessionInfo): string {
-    return session.cwd.split('/').filter(Boolean).pop() ?? session.cwd;
+  readonly idleCount = computed(() => this.sessions().filter((s) => s.turnState === 'idle').length);
+
+  project(session: SessionInfo): string {
+    return projectName(session);
   }
 
-  stateTone(session: SessionInfo): BadgeVariant {
-    if (session.turnState === 'idle') return 'success';
-    if (session.turnState === 'working') return 'warning';
-    return 'default';
+  select(session: SessionInfo): void {
+    this.store.selectTarget(session.key);
   }
 
-  send(session: SessionInfo): void {
-    void this.store.send(session.key);
-  }
-
-  sendNext(session: SessionInfo): void {
-    void this.store.sendNext(session.key);
-  }
-
-  toggleGate(session: SessionInfo): void {
+  toggleGate(session: SessionInfo, event: Event): void {
+    event.stopPropagation();
     void this.store.setGate(session.key, session.gate === 'auto' ? 'manual' : 'auto');
   }
 
-  async toggleQueue(session: SessionInfo): Promise<void> {
+  sendNext(session: SessionInfo, event: Event): void {
+    event.stopPropagation();
+    void this.store.sendNext(session.key);
+  }
+
+  async toggleQueue(session: SessionInfo, event: Event): Promise<void> {
+    event.stopPropagation();
     if (this.expanded() === session.key) {
       this.expanded.set(null);
       return;
@@ -55,7 +49,8 @@ export class SessionsPanelComponent {
     this.queue.set(await anchor.queue.list(session.key));
   }
 
-  async cancel(session: SessionInfo, entry: QueueEntry): Promise<void> {
+  async cancel(session: SessionInfo, entry: QueueEntry, event: Event): Promise<void> {
+    event.stopPropagation();
     await anchor.queue.cancel(session.key, entry.id);
     this.queue.set(await anchor.queue.list(session.key));
   }
