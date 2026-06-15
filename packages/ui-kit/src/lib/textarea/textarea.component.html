@@ -1,0 +1,28 @@
+@if (label()) {
+  <label class="label" [attr.for]="textareaId()">{{ label() }}</label>
+}
+<textarea
+  #textareaElement
+  class="field"
+  [id]="textareaId()"
+  [name]="name() || null"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  [rows]="rows()"
+  [autocomplete]="autocomplete() || null"
+  [attr.minlength]="minLength() ?? null"
+  [attr.maxlength]="maxLength() ?? null"
+  [readonly]="readonly()"
+  [required]="required()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-invalid]="error() ? true : null"
+  [attr.aria-describedby]="error() ? textareaId() + '-error' : hint() ? textareaId() + '-hint' : null"
+  (input)="onInput($event)"
+  (blur)="markTouched()"
+></textarea>
+@if (error()) {
+  <p class="message error" [id]="textareaId() + '-error'" role="alert">{{ error() }}</p>
+} @else if (hint()) {
+  <p class="message hint" [id]="textareaId() + '-hint'">{{ hint() }}</p>
+}

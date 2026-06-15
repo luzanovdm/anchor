@@ -4,9 +4,8 @@
       <div class="skills">
         @for (skill of skills(); track skill.id) {
           <button
-            class="chip"
-            type="button"
-            [class.is-active]="isSelected(skill.id)"
+            ttChip
+            [active]="isSelected(skill.id)"
             (click)="toggleSkill(skill.id)"
           >
             {{ skill.label }}
@@ -16,16 +15,16 @@
     }
     <span class="grow"></span>
     <span class="save" [class.is-busy]="saving()">{{ saving() ? 'saving…' : 'saved' }}</span>
-    <button class="newbtn" type="button" (click)="newDraft()">New</button>
+    <button ttButton variant="secondary" size="sm" (click)="newDraft()">New</button>
   </div>
 
-  <div class="inputwrap">
-    <ac-composer-editor
-      #editor
-      [initialDoc]="initialDoc()"
-      (docChange)="onDocChange($event)"
-      (fileDropped)="onFileDropped($event)"
-      (submit)="send()"
+  <div class="inputwrap" (keydown)="onKeydown($event)" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+    <tt-textarea
+      [value]="body()"
+      (valueChange)="onBodyChange($event)"
+      placeholder="Write a message…  ⌘↩ to send"
+      ariaLabel="Message"
+      [rows]="3"
     />
   </div>
 
@@ -33,17 +32,18 @@
     <span class="counts">{{ counts().lines }}L · {{ counts().chars }}C</span>
     <span class="grow"></span>
     <div class="send">
-      <button class="send-main" type="button" [disabled]="!canSend()" (click)="send()">
+      <button ttButton variant="primary" [disabled]="!canSend()" (click)="send()">
         @if (target(); as t) {
-          Send to <b>{{ targetLabel(t) }}</b>
+          Send to {{ targetLabel(t) }}
         } @else {
           No session
         }
         <span class="kbd">⌘↩</span>
       </button>
       <button
-        class="send-caret"
-        type="button"
+        ttButton
+        variant="secondary"
+        [iconOnly]="true"
         [disabled]="sessions().length === 0"
         (click)="toggleTargetMenu()"
         aria-label="Choose target session"

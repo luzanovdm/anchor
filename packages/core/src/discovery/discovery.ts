@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import type { AgentKind } from '../contract.js';
-import type { AgentAdapter } from '../ports.js';
+import { isTranscriptDiscoverable, type AgentAdapter } from '../ports.js';
 import { listProcesses, processCwd, ttyDevice, type ProcSnapshot } from './proc.js';
 
 /** Raw discovered session before turn-state / queue data is merged in. */
@@ -22,26 +22,51 @@ export interface DiscoveredSession {
  * Stateless per scan — the registry diffs scans over time.
  */
 export class Discovery {
+  /** Per-pid cwd/branch cache: a process's cwd never changes, and `lsof` is
+   *  flaky, so caching keeps sessions stable instead of flickering in and out. */
+  private readonly cwdCache = new Map<number, { cwd: string; branch: string | null }>();
+  /** Sticky pid → transcript pairing so a session keeps its transcript. */
+  private readonly transcriptCache = new Map<number, string>();
+
   constructor(private readonly adapters: readonly AgentAdapter[]) {}
 
   async scan(): Promise<DiscoveredSession[]> {
     const procs = await listProcesses();
 
-    // resolve each matching, interactive process to its cwd
+    // processes that look like an interactive agent session
+    const candidates = procs.filter((proc) => {
+      const adapter = this.adapters.find((a) => matchesProcess(a, proc.comm));
+      return adapter !== undefined && ttyDevice(proc.tty) !== null;
+    });
+
+    // forget cache entries for pids that are gone
+    const livePids = new Set(candidates.map((p) => p.pid));
+    for (const pid of [...this.cwdCache.keys()]) {
+      if (!livePids.has(pid)) this.cwdCache.delete(pid);
+    }
+    for (const pid of [...this.transcriptCache.keys()]) {
+      if (!livePids.has(pid)) this.transcriptCache.delete(pid);
+    }
+
+    // resolve each candidate's cwd (cached) and adapter
     const located = await Promise.all(
-      procs.map(async (proc) => {
+      candidates.map(async (proc) => {
         const adapter = this.adapters.find((a) => matchesProcess(a, proc.comm));
         if (adapter === undefined) return null;
-        // only real interactive sessions: must own a tty (drops daemons/helpers)
-        if (ttyDevice(proc.tty) === null) return null;
-        const cwd = await processCwd(proc.pid);
-        // `/` is the lsof fallback for processes we can't resolve — not a session
-        if (cwd === null || cwd === '/') return null;
-        return { proc, adapter, cwd };
+        let info = this.cwdCache.get(proc.pid);
+        if (info === undefined) {
+          const cwd = await processCwd(proc.pid);
+          // `/` is the lsof fallback for unresolved processes — not a session
+          if (cwd === null || cwd === '/') return null;
+          info = { cwd, branch: await gitBranch(cwd) };
+          this.cwdCache.set(proc.pid, info);
+        }
+        return { proc, adapter, cwd: info.cwd, branch: info.branch };
       }),
     );
     const valid = located.filter(
-      (l): l is { proc: ProcSnapshot; adapter: AgentAdapter; cwd: string } => l !== null,
+      (l): l is { proc: ProcSnapshot; adapter: AgentAdapter; cwd: string; branch: string | null } =>
+        l !== null,
     );
 
     // group concurrent sessions sharing one cwd so each gets its own transcript
@@ -55,15 +80,31 @@ export class Discovery {
 
     const sessions: DiscoveredSession[] = [];
     for (const bucket of groups.values()) {
-      const adapter = bucket[0]?.adapter;
-      const cwd = bucket[0]?.cwd;
-      if (adapter === undefined || cwd === undefined) continue;
+      const first = bucket[0];
+      if (first === undefined) continue;
+      const { adapter, cwd, branch } = first;
       const transcripts = await adapter.listTranscripts(cwd);
-      const branch = await gitBranch(cwd);
-      // busiest process ↔ freshest transcript (best-effort pairing)
-      const ordered = [...bucket].sort((a, b) => b.proc.cpu - a.proc.cpu);
-      ordered.forEach(({ proc }, index) => {
-        const transcriptPath = transcripts[index] ?? transcripts[0] ?? null;
+      // keep prior pid→transcript pairings that are still valid; consume them
+      const pool = [...transcripts];
+      for (const { proc } of bucket) {
+        const prev = this.transcriptCache.get(proc.pid);
+        if (prev !== undefined && pool.includes(prev)) {
+          pool.splice(pool.indexOf(prev), 1);
+        } else {
+          this.transcriptCache.delete(proc.pid);
+        }
+      }
+      // assign remaining transcripts to unpaired pids, busiest ↔ freshest
+      const unpaired = bucket
+        .filter(({ proc }) => !this.transcriptCache.has(proc.pid))
+        .sort((a, b) => b.proc.cpu - a.proc.cpu);
+      unpaired.forEach(({ proc }, index) => {
+        const t = pool[index] ?? pool[0];
+        if (t !== undefined) this.transcriptCache.set(proc.pid, t);
+      });
+
+      for (const { proc } of bucket) {
+        const transcriptPath = this.transcriptCache.get(proc.pid) ?? transcripts[0] ?? null;
         sessions.push({
           // one process = one session; pid is the stable identity
           key: `${adapter.kind}:${proc.pid}`,
@@ -76,9 +117,38 @@ export class Discovery {
           transcriptPath,
           sessionId: adapter.sessionId(transcriptPath, proc.pid),
         });
-      });
+      }
     }
-    return sessions;
+    // process-less sessions (e.g. Codex desktop/IDE) discovered from transcripts
+    const usedTranscripts = new Set(
+      sessions.map((s) => s.transcriptPath).filter((p): p is string => p !== null),
+    );
+    const now = Date.now();
+    for (const adapter of this.adapters) {
+      if (!isTranscriptDiscoverable(adapter)) continue;
+      const found = await adapter.discoverFromTranscripts(now);
+      for (const ts of found) {
+        if (usedTranscripts.has(ts.transcriptPath)) continue;
+        usedTranscripts.add(ts.transcriptPath);
+        sessions.push({
+          key: `${adapter.kind}:${ts.sessionId}`,
+          agent: adapter.kind,
+          pid: 0, // no controlling process
+          cpu: 0,
+          tty: '',
+          cwd: ts.cwd,
+          branch: await gitBranch(ts.cwd),
+          transcriptPath: ts.transcriptPath,
+          sessionId: ts.sessionId,
+        });
+      }
+    }
+
+    // stable display order independent of CPU jitter
+    return sessions.sort(
+      (a, b) =>
+        a.agent.localeCompare(b.agent) || a.pid - b.pid || a.sessionId.localeCompare(b.sessionId),
+    );
   }
 }
 

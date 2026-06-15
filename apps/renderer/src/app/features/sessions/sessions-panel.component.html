@@ -32,7 +32,7 @@
               @if (session.branch; as b) {
                 <span class="branch">{{ b }}</span>
               }
-              <span class="pid">#{{ session.pid }}</span>
+              <span class="pid">{{ tag(session) }}</span>
             </div>
             <div class="sub">
               <span class="state" [class]="session.turnState">{{ session.turnState }}</span>

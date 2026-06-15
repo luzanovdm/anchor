@@ -13,3 +13,4 @@ export * from './lib/eyebrow';
 export * from './lib/empty-state';
 export * from './lib/list-item';
 export * from './lib/spinner';
+export * from './lib/textarea';

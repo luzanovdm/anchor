@@ -49,6 +49,27 @@ export interface AgentAdapter {
   formatForInject(body: string, attachmentAbsPaths: readonly string[]): string;
 }
 
+/** A session discovered from transcript files alone (no owning tty process —
+ *  e.g. Codex desktop / IDE sessions that still write rollout transcripts). */
+export interface TranscriptSession {
+  readonly sessionId: string;
+  readonly cwd: string;
+  readonly transcriptPath: string;
+  readonly title: string | null;
+  readonly lastActivityAt: number;
+}
+
+/** Optional adapter capability: discover sessions from transcripts, not `ps`. */
+export interface TranscriptDiscoverable {
+  discoverFromTranscripts(now: number): Promise<readonly TranscriptSession[]>;
+}
+
+export function isTranscriptDiscoverable(
+  adapter: AgentAdapter,
+): adapter is AgentAdapter & TranscriptDiscoverable {
+  return typeof (adapter as Partial<TranscriptDiscoverable>).discoverFromTranscripts === 'function';
+}
+
 /** Port: deliver text to a running session via a concrete OS mechanism. */
 export interface Injector {
   readonly kind: InjectStrategyKind;

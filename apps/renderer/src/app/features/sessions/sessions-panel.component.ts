@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import type { QueueEntry, SessionInfo, SessionKey } from '@anchor/core';
 import { EmptyStateComponent } from '@anchor/ui-kit';
-import { AnchorStore, projectName } from '../../core/anchor.store';
+import { AnchorStore, projectName, sessionTag } from '../../core/anchor.store';
 import { anchor } from '../../core/anchor';
 
 @Component({
@@ -23,6 +23,10 @@ export class SessionsPanelComponent {
 
   project(session: SessionInfo): string {
     return projectName(session);
+  }
+
+  tag(session: SessionInfo): string {
+    return sessionTag(session);
   }
 
   select(session: SessionInfo): void {

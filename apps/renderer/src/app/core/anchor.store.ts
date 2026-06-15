@@ -230,3 +230,10 @@ export class AnchorStore {
 export function projectName(session: SessionInfo): string {
   return session.cwd.split('/').filter(Boolean).pop() ?? session.cwd;
 }
+
+/** Short disambiguating tag: pid for terminal sessions, id tail for the rest. */
+export function sessionTag(session: SessionInfo): string {
+  if (session.pid > 0) return `#${session.pid}`;
+  const id = session.key.split(':').pop() ?? session.key;
+  return `…${id.slice(-6)}`;
+}

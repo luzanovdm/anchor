@@ -1,0 +1,80 @@
+@use 'styles/mixins' as m;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-1\.5);
+  min-width: 0;
+  width: 100%;
+}
+
+.label {
+  font-size: var(--tt-text-sm);
+  font-weight: var(--tt-font-medium);
+  color: var(--tt-text-secondary);
+}
+
+.field {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--tt-space-3);
+  border: none;
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  outline: none;
+  box-shadow: var(--tt-field-shadow);
+  background: var(--tt-field-bg);
+  color: var(--tt-text-primary);
+  font-family: var(--tt-font-family);
+  font-size: var(--tt-text-sm);
+  line-height: var(--tt-leading-normal);
+  resize: vertical;
+  transition: box-shadow var(--tt-transition-fast);
+
+  &::placeholder {
+    color: var(--tt-text-tertiary);
+  }
+
+  &:focus {
+    box-shadow: var(--tt-field-shadow-focus);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+:host(.tt-textarea-error) .field {
+  box-shadow: var(--tt-field-shadow-error);
+
+  &:focus {
+    box-shadow: var(--tt-field-shadow-error);
+  }
+}
+
+// Fill the parent panel — textarea becomes the primary surface (notes,
+// scratchpads). Host claims remaining flex space; field stretches inside.
+:host(.tt-textarea-fill) {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  .field {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    resize: none;
+  }
+}
+
+.message {
+  font-size: var(--tt-text-xs);
+  margin: 0;
+}
+
+.hint {
+  color: var(--tt-text-tertiary);
+}
+.error {
+  color: var(--tt-danger);
+}

@@ -72,71 +72,12 @@
   color: var(--tt-warning);
 }
 
-/* scrollable session feed fills the gap above the pinned composer */
+/* scrollable chat feed fills the gap above the queue + pinned composer */
 .feed {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding: var(--tt-space-4) var(--tt-space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--tt-space-5);
-}
-
-.label {
-  display: block;
-  font-size: var(--tt-text-2xs);
-  font-weight: var(--tt-font-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--tt-text-tertiary);
-  margin-bottom: var(--tt-space-2);
-}
-
-.now .output {
-  margin: 0;
-  font-size: var(--tt-text-sm);
-  line-height: 1.55;
-  color: var(--tt-text-primary);
-  white-space: pre-wrap;
-  max-height: 220px;
-  overflow-y: auto;
-}
-
-.history {
-  display: flex;
-  flex-direction: column;
-  gap: var(--tt-space-3);
-}
-
-.msg {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: var(--tt-space-3);
-  font-size: var(--tt-text-sm);
-  line-height: 1.5;
-}
-
-.role {
-  font-size: var(--tt-text-2xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--tt-text-tertiary);
-  padding-top: 2px;
-}
-
-.msg.assistant .role {
-  color: var(--tt-accent);
-}
-
-.text {
-  color: var(--tt-text-secondary);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.msg.assistant .text {
-  color: var(--tt-text-primary);
 }
 
 .hint {
@@ -145,10 +86,118 @@
   color: var(--tt-text-tertiary);
 }
 
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-3);
+}
+
+.msg {
+  display: flex;
+}
+
+.msg.user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--tt-space-3) var(--tt-space-4);
+  border-radius: var(--tt-radius-md);
+  font-size: var(--tt-text-sm);
+  line-height: 1.55;
+}
+
+.msg.assistant .bubble {
+  background: var(--tt-bg-secondary);
+  border: 1px solid var(--tt-border-subtle);
+  border-bottom-left-radius: var(--tt-radius-xs);
+}
+
+.msg.user .bubble {
+  background: var(--tt-accent-subtle);
+  border-bottom-right-radius: var(--tt-radius-xs);
+}
+
+.role {
+  font-size: var(--tt-text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tt-text-tertiary);
+}
+
+.msg.assistant .role {
+  color: var(--tt-accent);
+}
+
+.text {
+  color: var(--tt-text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* working indicator at the tail of the chat */
+.typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: var(--tt-space-3) var(--tt-space-4);
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tt-radius-full);
+  background: var(--tt-text-tertiary);
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing span {
+    animation: none;
+  }
+}
+
+/* queued (scheduled) messages — sits between chat and composer */
+.queue {
+  flex: none;
+  padding: var(--tt-space-3) var(--tt-space-5);
+  border-top: 1px solid var(--tt-border-subtle);
+}
+
 .qhead {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  margin-bottom: var(--tt-space-2);
+}
+
+.label {
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tt-text-tertiary);
 }
 
 .ghint {
@@ -166,6 +215,12 @@
   cursor: pointer;
 }
 
+.qempty {
+  margin: 0;
+  font-size: var(--tt-text-xs);
+  color: var(--tt-text-tertiary);
+}
+
 .qlist {
   display: flex;
   flex-direction: column;
@@ -176,7 +231,7 @@
   display: flex;
   align-items: center;
   gap: var(--tt-space-3);
-  padding: var(--tt-space-3);
+  padding: var(--tt-space-2) var(--tt-space-3);
   border-radius: var(--tt-radius-sm);
   background: var(--tt-bg-secondary);
   border: 1px solid var(--tt-border-subtle);
@@ -209,16 +264,6 @@
   color: var(--tt-danger);
 }
 
-.qpreview {
-  padding: var(--tt-space-3);
-  border-radius: var(--tt-radius-sm);
-  background: var(--tt-bg-tertiary);
-  box-shadow: var(--tt-shadow-lg);
-  font-size: var(--tt-text-sm);
-  color: var(--tt-text-primary);
-}
-
-/* CDK drag affordances */
 .cdk-drag-placeholder {
   opacity: 0.4;
 }

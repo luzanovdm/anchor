@@ -9,57 +9,57 @@
         @if (t.branch; as b) {
           <span class="branch">⎇ {{ b }}</span>
         }
-        <span class="pid">#{{ t.pid }}</span>
+        <span class="pid">{{ tag(t) }}</span>
         <span class="state" [class]="t.turnState">{{ t.turnState }}</span>
       </span>
     </div>
   </header>
 
-  <div class="feed">
-    @if (inspect()?.lastOutput; as out) {
-      <section class="now">
-        <span class="label">Now in session</span>
-        <p class="output">{{ out }}</p>
-      </section>
-    }
-
-    @if (history().length > 0) {
-      <section class="history">
-        <span class="label">History</span>
+  <div #feed class="feed">
+    @if (history().length === 0) {
+      <p class="hint">No transcript activity yet for this session.</p>
+    } @else {
+      <div class="chat">
         @for (msg of history(); track $index) {
           <div class="msg" [class]="msg.role">
-            <span class="role">{{ msg.role }}</span>
-            <span class="text">{{ msg.text }}</span>
+            <div class="bubble">
+              <span class="role">{{ msg.role }}</span>
+              <span class="text">{{ msg.text }}</span>
+            </div>
           </div>
         }
-      </section>
-    } @else if (!inspect()?.lastOutput) {
-      <p class="hint">No transcript activity yet for this session.</p>
-    }
-
-    @if (queue().length > 0) {
-      <section class="queue">
-        <div class="qhead">
-          <span class="label">Queue · {{ queue().length }}</span>
-          @if (t.gate === 'manual') {
-            <button class="sendnext" type="button" (click)="sendNext()">Send next →</button>
-          } @else {
-            <span class="ghint">auto — next sends when the turn ends</span>
-          }
-        </div>
-        <div cdkDropList class="qlist" (cdkDropListDropped)="drop($event)">
-          @for (entry of queue(); track entry.id) {
-            <div cdkDrag class="qitem">
-              <span class="grip" cdkDragHandle>⠿</span>
-              <span class="qbody">{{ entry.body }}</span>
-              <button class="cancel" type="button" (click)="cancel(entry.id)">✕</button>
-              <div class="qpreview" *cdkDragPreview>{{ entry.body }}</div>
-            </div>
-          }
-        </div>
-      </section>
+        @if (t.turnState === 'working') {
+          <div class="typing"><span></span><span></span><span></span></div>
+        }
+      </div>
     }
   </div>
+
+  <section class="queue">
+    <div class="qhead">
+      <span class="label">Queue · {{ queue().length }}</span>
+      @if (queue().length > 0 && t.gate === 'manual') {
+        <button class="sendnext" type="button" (click)="sendNext()">Send next →</button>
+      } @else if (queue().length > 0) {
+        <span class="ghint">auto — next sends when the turn ends</span>
+      } @else {
+        <span class="ghint">gate: {{ t.gate }}</span>
+      }
+    </div>
+    @if (queue().length === 0) {
+      <p class="qempty">No queued messages. Sent while busy, they wait here and drag to reorder.</p>
+    } @else {
+      <div cdkDropList class="qlist" (cdkDropListDropped)="drop($event)">
+        @for (entry of queue(); track entry.id) {
+          <div cdkDrag class="qitem">
+            <span class="grip" cdkDragHandle>⠿</span>
+            <span class="qbody">{{ entry.body }}</span>
+            <button class="cancel" type="button" (click)="cancel(entry.id)">✕</button>
+          </div>
+        }
+      </div>
+    }
+  </section>
 
   <ac-composer-panel />
 } @else {
