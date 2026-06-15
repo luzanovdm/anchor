@@ -53,8 +53,20 @@
         @for (entry of queue(); track entry.id) {
           <div cdkDrag class="qitem">
             <span class="grip" cdkDragHandle>⠿</span>
-            <span class="qbody">{{ entry.body }}</span>
-            <button class="cancel" type="button" (click)="cancel(entry.id)">✕</button>
+            @if (editingId() === entry.id) {
+              <textarea
+                class="qedit"
+                rows="2"
+                [value]="editText()"
+                (input)="onEditInput($event)"
+              ></textarea>
+              <button class="iconbtn good" type="button" (click)="saveEdit(entry.id)">✓</button>
+              <button class="iconbtn" type="button" (click)="cancelEdit()">✕</button>
+            } @else {
+              <span class="qbody" (dblclick)="startEdit(entry)">{{ entry.body }}</span>
+              <button class="iconbtn" type="button" (click)="startEdit(entry)" title="Edit">✎</button>
+              <button class="iconbtn" type="button" (click)="cancel(entry.id)" title="Cancel">✕</button>
+            }
           </div>
         }
       </div>

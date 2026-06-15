@@ -145,6 +145,15 @@ export class Services {
     return this.dispatcher.sendNext(key);
   }
 
+  async steer(key: SessionKey, draftId: string): Promise<InjectResult> {
+    const message = await this.prepare(draftId);
+    return this.dispatcher.steer(key, message);
+  }
+
+  editQueue(key: SessionKey, entryId: string, body: string): Promise<void> {
+    return this.queue.edit(key, entryId, body);
+  }
+
   /** Build the durable message: rendered body + relative attachment paths. */
   private async prepare(draftId: string): Promise<PreparedMessage> {
     const draft = await this.drafts.load(draftId);

@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   inject,
+  signal,
   viewChild,
 } from '@angular/core';
 import { CdkDrag, CdkDragHandle, CdkDropList, type CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -27,6 +28,9 @@ export class SessionViewComponent {
   readonly target = this.store.targetSession;
   readonly inspect = this.store.inspect;
   readonly queue = this.store.pendingQueue;
+
+  readonly editingId = signal<string | null>(null);
+  readonly editText = signal('');
 
   readonly title = computed(() => {
     const t = this.target();
@@ -66,6 +70,25 @@ export class SessionViewComponent {
 
   cancel(entryId: string): void {
     void this.store.cancelQueueEntry(entryId);
+  }
+
+  startEdit(entry: { id: string; body: string }): void {
+    this.editingId.set(entry.id);
+    this.editText.set(entry.body);
+  }
+
+  onEditInput(event: Event): void {
+    const target = event.target;
+    if (target instanceof HTMLTextAreaElement) this.editText.set(target.value);
+  }
+
+  saveEdit(entryId: string): void {
+    void this.store.editQueueEntry(entryId, this.editText());
+    this.editingId.set(null);
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
   }
 
   sendNext(): void {

@@ -16,6 +16,8 @@ export type InjectStrategyKind = 'tty' | 'clipboard';
 export interface InjectTarget {
   readonly pid: number;
   readonly tty: string | null;
+  /** macOS app to focus when there's no tty (process-less GUI sessions). */
+  readonly app?: string | null;
 }
 
 /**
@@ -29,6 +31,8 @@ export interface AgentAdapter {
   readonly processNames: readonly string[];
   /** strategies tried in order until one succeeds */
   readonly injectStrategies: readonly InjectStrategyKind[];
+  /** macOS app name to focus for process-less GUI sessions (clipboard inject) */
+  readonly desktopApp?: string;
 
   /** Locate the active transcript for a session running at `cwd`. */
   locateTranscript(cwd: string): Promise<string | null>;

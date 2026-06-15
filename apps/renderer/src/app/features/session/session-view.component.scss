@@ -253,15 +253,38 @@
   color: var(--tt-text-secondary);
 }
 
-.cancel {
+.iconbtn {
   border: none;
   background: transparent;
   color: var(--tt-text-tertiary);
   cursor: pointer;
+  font-size: var(--tt-text-sm);
+  padding: 0 var(--tt-space-1);
 }
 
-.cancel:hover {
-  color: var(--tt-danger);
+.iconbtn:hover {
+  color: var(--tt-text-primary);
+}
+
+.iconbtn.good:hover {
+  color: var(--tt-success);
+}
+
+.qedit {
+  flex: 1;
+  resize: vertical;
+  border: none;
+  border-radius: var(--tt-radius-sm);
+  padding: var(--tt-space-2);
+  font: inherit;
+  color: var(--tt-text-primary);
+  background: var(--tt-bg-tertiary);
+  box-shadow: var(--tt-field-shadow);
+}
+
+.qedit:focus {
+  outline: none;
+  box-shadow: var(--tt-field-shadow-focus);
 }
 
 .cdk-drag-placeholder {

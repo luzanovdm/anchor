@@ -58,6 +58,14 @@ export class Dispatcher {
     return this.pumpOne(sessionKey);
   }
 
+  /**
+   * Steer: inject a message immediately, mid-turn, without touching the queue or
+   * waiting for a turn boundary. Used to nudge/correct an agent while it works.
+   */
+  async steer(sessionKey: SessionKey, message: PreparedMessage): Promise<InjectResult> {
+    return this.deps.inject(sessionKey, message);
+  }
+
   /** Inject exactly one queued head, guarded by the per-session mutex. */
   private async pumpOne(sessionKey: SessionKey): Promise<InjectResult | null> {
     if (this.inFlight.has(sessionKey)) return null;

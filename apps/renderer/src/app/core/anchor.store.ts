@@ -192,6 +192,25 @@ export class AnchorStore {
     await this.refreshTarget();
   }
 
+  /** Inject the current draft immediately, mid-turn (steer the agent). */
+  async steer(): Promise<void> {
+    const draft = this.currentDraft();
+    const target = this.targetSession();
+    if (draft === null || target === null || draft.body.trim().length === 0) return;
+    const result = await anchor.dispatch.steer(target.key, draft.meta.id);
+    if (result?.ok) this.pushToast(`Steered ${target.agent} · ${projectName(target)}`, 'success');
+    else this.pushToast(`Steer failed: ${result?.error ?? 'unknown'}`, 'danger');
+    await this.createDraft();
+    await this.refreshTarget();
+  }
+
+  async editQueueEntry(entryId: string, body: string): Promise<void> {
+    const key = this.selectedTarget();
+    if (key === null) return;
+    await anchor.queue.edit(key, entryId, body);
+    await this.refreshTarget();
+  }
+
   async sendNext(key: SessionKey): Promise<void> {
     const result = await anchor.dispatch.sendNext(key);
     if (result === null) this.pushToast('Queue is empty', 'info');

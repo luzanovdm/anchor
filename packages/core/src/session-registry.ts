@@ -80,10 +80,15 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
     return this.deps.adapters.find((a) => a.kind === session.agent) ?? null;
   }
 
-  injectTargetFor(key: SessionKey): { pid: number; tty: string | null } | null {
+  injectTargetFor(key: SessionKey): { pid: number; tty: string | null; app: string | null } | null {
     const session = this.discovered.get(key);
     if (session === undefined) return null;
-    return { pid: session.pid, tty: ttyDevice(session.tty) };
+    const adapter = this.deps.adapters.find((a) => a.kind === session.agent);
+    return {
+      pid: session.pid,
+      tty: ttyDevice(session.tty),
+      app: adapter?.desktopApp ?? null,
+    };
   }
 
   private async poll(): Promise<void> {

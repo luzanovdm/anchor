@@ -29,6 +29,9 @@ export function registerIpc(services: Services): void {
     services.send(sessionKey(key), str(draftId)),
   );
   handle(IPC.dispatchSendNext, (key: unknown) => services.sendNext(sessionKey(key)));
+  handle(IPC.dispatchSteer, (key: unknown, draftId: unknown) =>
+    services.steer(sessionKey(key), str(draftId)),
+  );
   handle(IPC.dispatchSetGate, (key: unknown, mode: unknown) => {
     services.setGate(sessionKey(key), gateMode(mode));
   });
@@ -36,6 +39,9 @@ export function registerIpc(services: Services): void {
   handle(IPC.queueList, (key: unknown) => services.listQueue(sessionKey(key)));
   handle(IPC.queueCancel, (key: unknown, entryId: unknown) =>
     services.cancelQueue(sessionKey(key), str(entryId)),
+  );
+  handle(IPC.queueEdit, (key: unknown, entryId: unknown, body: unknown) =>
+    services.editQueue(sessionKey(key), str(entryId), str(body)),
   );
   handle(IPC.queueReorder, (key: unknown, entryId: unknown, toIndex: unknown) =>
     services.reorderQueue(sessionKey(key), str(entryId), int(toIndex)),

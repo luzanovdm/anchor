@@ -149,11 +149,15 @@ export interface AnchorBridge {
     send(sessionKey: SessionKey, draftId: string): Promise<void>;
     /** manual gate: force-send the head of the queue */
     sendNext(sessionKey: SessionKey): Promise<InjectResult | null>;
+    /** steer: inject a draft immediately, mid-turn, bypassing the queue/gate */
+    steer(sessionKey: SessionKey, draftId: string): Promise<InjectResult | null>;
     setGate(sessionKey: SessionKey, mode: GateMode): Promise<void>;
   };
   readonly queue: {
     list(sessionKey: SessionKey): Promise<readonly QueueEntry[]>;
     cancel(sessionKey: SessionKey, entryId: string): Promise<void>;
+    /** edit a still-queued message's body before it is sent */
+    edit(sessionKey: SessionKey, entryId: string, body: string): Promise<void>;
     reorder(sessionKey: SessionKey, entryId: string, toIndex: number): Promise<void>;
   };
 }
@@ -174,9 +178,11 @@ export const IPC = {
   sessionsInspect: 'sessions:inspect',
   dispatchSend: 'dispatch:send',
   dispatchSendNext: 'dispatch:sendNext',
+  dispatchSteer: 'dispatch:steer',
   dispatchSetGate: 'dispatch:setGate',
   queueList: 'queue:list',
   queueCancel: 'queue:cancel',
+  queueEdit: 'queue:edit',
   queueReorder: 'queue:reorder',
 } as const;
 

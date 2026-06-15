@@ -80,8 +80,14 @@ export class ComposerPanelComponent {
     void this.store.createDraft();
   }
 
+  readonly isWorking = computed(() => this.target()?.turnState === 'working');
+
   send(): void {
     void this.store.send();
+  }
+
+  steer(): void {
+    void this.store.steer();
   }
 
   pickTarget(session: SessionInfo): void {

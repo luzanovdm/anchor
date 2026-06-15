@@ -25,6 +25,8 @@ export class CodexAdapter implements AgentAdapter, TranscriptDiscoverable {
   readonly processNames = ['codex'] as const;
   // TTY injection into Codex is unproven — prefer clipboard paste first
   readonly injectStrategies = ['clipboard', 'tty'] as const;
+  // process-less GUI sessions are focused by app name for clipboard paste
+  readonly desktopApp = 'Codex';
 
   /**
    * Codex (desktop / IDE) sessions have no controlling tty, so `ps` can't find

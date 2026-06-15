@@ -32,6 +32,18 @@
     <span class="counts">{{ counts().lines }}L · {{ counts().chars }}C</span>
     <span class="grow"></span>
     <div class="send">
+      @if (isWorking()) {
+        <button
+          ttButton
+          variant="secondary"
+          size="sm"
+          [disabled]="!canSend()"
+          (click)="steer()"
+          title="Inject now, mid-turn"
+        >
+          Steer
+        </button>
+      }
       <button ttButton variant="primary" [disabled]="!canSend()" (click)="send()">
         @if (target(); as t) {
           Send to {{ targetLabel(t) }}
