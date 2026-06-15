@@ -66,6 +66,9 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
   }
 
   gateOf(key: SessionKey): GateMode {
+    // GUI (process-less) sessions are copy-only and user-driven — never auto
+    const session = this.discovered.get(key);
+    if (session !== undefined && session.pid === 0) return 'manual';
     return this.gateOverride.get(key) ?? 'auto';
   }
 
@@ -80,10 +83,15 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
     return this.deps.adapters.find((a) => a.kind === session.agent) ?? null;
   }
 
-  injectTargetFor(key: SessionKey): { pid: number; tty: string | null } | null {
+  injectTargetFor(key: SessionKey): { pid: number; tty: string | null; app: string | null } | null {
     const session = this.discovered.get(key);
     if (session === undefined) return null;
-    return { pid: session.pid, tty: ttyDevice(session.tty) };
+    const adapter = this.deps.adapters.find((a) => a.kind === session.agent);
+    return {
+      pid: session.pid,
+      tty: ttyDevice(session.tty),
+      app: adapter?.desktopApp ?? null,
+    };
   }
 
   private async poll(): Promise<void> {
@@ -124,6 +132,7 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
         key: session.key,
         agent: session.agent,
         cwd: session.cwd,
+        branch: session.branch,
         pid: session.pid,
         tty: ttyDevice(session.tty),
         transcriptPath: session.transcriptPath,

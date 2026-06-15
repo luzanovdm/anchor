@@ -21,11 +21,14 @@ const CH = {
   skillsList: 'skills:list',
   sessionsList: 'sessions:list',
   sessionsChanged: 'sessions:changed',
+  sessionsInspect: 'sessions:inspect',
   dispatchSend: 'dispatch:send',
   dispatchSendNext: 'dispatch:sendNext',
+  dispatchSteer: 'dispatch:steer',
   dispatchSetGate: 'dispatch:setGate',
   queueList: 'queue:list',
   queueCancel: 'queue:cancel',
+  queueEdit: 'queue:edit',
   queueReorder: 'queue:reorder',
 } as const;
 
@@ -54,11 +57,14 @@ const bridge = {
       ipcRenderer.on(CH.sessionsChanged, listener);
       return () => ipcRenderer.removeListener(CH.sessionsChanged, listener);
     },
+    inspect: (sessionKey: string) => ipcRenderer.invoke(CH.sessionsInspect, sessionKey),
   },
   dispatch: {
     send: (sessionKey: string, draftId: string) =>
       ipcRenderer.invoke(CH.dispatchSend, sessionKey, draftId),
     sendNext: (sessionKey: string) => ipcRenderer.invoke(CH.dispatchSendNext, sessionKey),
+    steer: (sessionKey: string, draftId: string) =>
+      ipcRenderer.invoke(CH.dispatchSteer, sessionKey, draftId),
     setGate: (sessionKey: string, mode: string) =>
       ipcRenderer.invoke(CH.dispatchSetGate, sessionKey, mode),
   },
@@ -66,6 +72,8 @@ const bridge = {
     list: (sessionKey: string) => ipcRenderer.invoke(CH.queueList, sessionKey),
     cancel: (sessionKey: string, entryId: string) =>
       ipcRenderer.invoke(CH.queueCancel, sessionKey, entryId),
+    edit: (sessionKey: string, entryId: string, body: string) =>
+      ipcRenderer.invoke(CH.queueEdit, sessionKey, entryId, body),
     reorder: (sessionKey: string, entryId: string, toIndex: number) =>
       ipcRenderer.invoke(CH.queueReorder, sessionKey, entryId, toIndex),
   },

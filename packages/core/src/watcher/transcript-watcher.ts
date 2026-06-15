@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { promises as fs } from 'node:fs';
-import type { SessionKey, TurnState } from '../contract.js';
+import type { SessionKey, TranscriptMessage, SessionLiveView, TurnState } from '../contract.js';
 import type { AgentAdapter, TranscriptEvent } from '../ports.js';
 import { processCpu } from '../discovery/proc.js';
 
@@ -8,6 +8,8 @@ import { processCpu } from '../discovery/proc.js';
 export const IDLE_MS = 1500;
 const POLL_MS = 500;
 const CPU_IDLE_THRESHOLD = 3; // %cpu below which the agent is considered quiet
+/** how many recent text messages to retain per session for the inspector */
+const HISTORY_LIMIT = 40;
 
 interface Tracked {
   readonly key: SessionKey;
@@ -19,6 +21,8 @@ interface Tracked {
   lastEvent: TranscriptEvent | null;
   state: TurnState;
   finalizedForCurrentTurn: boolean;
+  title: string | null;
+  history: TranscriptMessage[];
 }
 
 export interface WatcherEvents {
@@ -64,8 +68,24 @@ export class TranscriptWatcher extends EventEmitter<WatcherEvents> {
       lastEvent: null,
       state: 'unknown',
       finalizedForCurrentTurn: false,
+      title: null,
+      history: [],
     });
     this.ensureRunning();
+  }
+
+  /** Live view of a session: title, current output, and recent messages. */
+  inspect(key: SessionKey): SessionLiveView | null {
+    const t = this.tracked.get(key);
+    if (t === undefined) return null;
+    const lastAssistant = [...t.history].reverse().find((m) => m.role === 'assistant');
+    return {
+      key,
+      title: t.title,
+      turnState: t.state,
+      lastOutput: lastAssistant?.text ?? null,
+      history: t.history,
+    };
   }
 
   untrack(key: SessionKey): void {
@@ -99,6 +119,23 @@ export class TranscriptWatcher extends EventEmitter<WatcherEvents> {
 
   private async evaluate(t: Tracked, now: number): Promise<void> {
     const grew = await this.drainNewLines(t, now);
+
+    // explicit lifecycle events (e.g. Codex task_complete) are authoritative and
+    // override the quiet/CPU heuristic — needed for process-less GUI sessions.
+    const boundary = t.lastEvent?.turnBoundary;
+    if (boundary === 'end') {
+      this.setState(t, 'idle');
+      if (!t.finalizedForCurrentTurn) {
+        t.finalizedForCurrentTurn = true;
+        this.emit('turn-finalized', t.key);
+      }
+      return;
+    }
+    if (boundary === 'start') {
+      this.setState(t, 'working');
+      t.finalizedForCurrentTurn = false;
+      return;
+    }
 
     if (grew) {
       // any growth means the turn is still in progress (thinking or tool-loop)
@@ -150,8 +187,15 @@ export class TranscriptWatcher extends EventEmitter<WatcherEvents> {
       const chunk = buf.toString('utf8');
       for (const line of chunk.split('\n')) {
         if (line.trim().length === 0) continue;
+        const title = safeTitle(t.adapter, line);
+        if (title !== null) t.title = title;
         const event = safeParse(t.adapter, line);
-        if (event !== null) t.lastEvent = event;
+        if (event === null) continue;
+        t.lastEvent = event;
+        if (event.text !== undefined && event.text.length > 0) {
+          t.history.push({ role: event.role, text: event.text, ts: event.ts });
+          if (t.history.length > HISTORY_LIMIT) t.history.shift();
+        }
       }
       t.lastGrowthAt = now;
       return true;
@@ -170,6 +214,14 @@ export class TranscriptWatcher extends EventEmitter<WatcherEvents> {
 function safeParse(adapter: AgentAdapter, line: string): TranscriptEvent | null {
   try {
     return adapter.parseLine(line);
+  } catch {
+    return null;
+  }
+}
+
+function safeTitle(adapter: AgentAdapter, line: string): string | null {
+  try {
+    return adapter.extractTitle(line);
   } catch {
     return null;
   }

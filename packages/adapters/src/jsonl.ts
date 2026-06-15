@@ -1,41 +1,56 @@
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 
-/** Pick the most recently modified `.jsonl` under a directory (active transcript). */
-export async function newestJsonl(dir: string): Promise<string | null> {
+/** All `.jsonl` files under a directory, newest first. */
+export async function listJsonlByMtime(dir: string): Promise<string[]> {
   let entries: string[];
   try {
     entries = (await fs.readdir(dir)).filter((n) => n.endsWith('.jsonl'));
   } catch {
-    return null;
+    return [];
   }
-  let best: { path: string; mtime: number } | null = null;
-  for (const name of entries) {
-    const path = join(dir, name);
-    try {
-      const stat = await fs.stat(path);
-      const mtime = stat.mtimeMs;
-      if (best === null || mtime > best.mtime) best = { path, mtime };
-    } catch {
-      // ignore unreadable file
-    }
-  }
-  return best?.path ?? null;
+  const stated = await Promise.all(
+    entries.map(async (name) => {
+      const path = join(dir, name);
+      try {
+        return { path, mtime: (await fs.stat(path)).mtimeMs };
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return stated
+    .filter((s): s is { path: string; mtime: number } => s !== null)
+    .sort((a, b) => b.mtime - a.mtime)
+    .map((s) => s.path);
+}
+
+/** Pick the most recently modified `.jsonl` under a directory (active transcript). */
+export async function newestJsonl(dir: string): Promise<string | null> {
+  return (await listJsonlByMtime(dir))[0] ?? null;
+}
+
+/** Recursively find all `rollout-*.jsonl` (Codex nests by date), newest first. */
+export async function listRolloutsByMtime(root: string): Promise<string[]> {
+  const files = await collectRollouts(root);
+  const stated = await Promise.all(
+    files.map(async (path) => {
+      try {
+        return { path, mtime: (await fs.stat(path)).mtimeMs };
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return stated
+    .filter((s): s is { path: string; mtime: number } => s !== null)
+    .sort((a, b) => b.mtime - a.mtime)
+    .map((s) => s.path);
 }
 
 /** Recursively find the newest `rollout-*.jsonl` (Codex nests by date). */
 export async function newestRollout(root: string): Promise<string | null> {
-  const files = await collectRollouts(root);
-  let best: { path: string; mtime: number } | null = null;
-  for (const path of files) {
-    try {
-      const stat = await fs.stat(path);
-      if (best === null || stat.mtimeMs > best.mtime) best = { path, mtime: stat.mtimeMs };
-    } catch {
-      // ignore unreadable file
-    }
-  }
-  return best?.path ?? null;
+  return (await listRolloutsByMtime(root))[0] ?? null;
 }
 
 async function collectRollouts(dir: string): Promise<string[]> {

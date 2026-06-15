@@ -1,0 +1,89 @@
+@if (target(); as t) {
+  <header class="head">
+    <div class="titlebar"></div>
+    <div class="heading">
+      <span class="name">{{ title() }}</span>
+      <span class="meta">
+        <span class="agent">{{ t.agent }}</span>
+        <span class="proj">{{ project() }}</span>
+        @if (t.branch; as b) {
+          <span class="branch">⎇ {{ b }}</span>
+        }
+        <span class="pid">{{ tag(t) }}</span>
+        <span class="state" [class]="t.turnState">{{ t.turnState }}</span>
+      </span>
+    </div>
+  </header>
+
+  <div #feed class="feed">
+    @if (history().length === 0) {
+      <p class="hint">No transcript activity yet for this session.</p>
+    } @else {
+      <div class="chat">
+        @for (msg of history(); track $index) {
+          <div class="msg" [class]="msg.role">
+            <div class="bubble">
+              <span class="role">{{ msg.role }}</span>
+              <span class="text">{{ msg.text }}</span>
+            </div>
+          </div>
+        }
+        @if (t.turnState === 'working') {
+          <div class="typing"><span></span><span></span><span></span></div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (t.turnState === 'idle' && (inspect()?.lastOutput || history().length > 0)) {
+    <div class="waiting">
+      <span class="pulse"></span>
+      {{ t.agent }} finished its turn — waiting for your reply
+    </div>
+  }
+
+  <section class="queue">
+    <div class="qhead">
+      <span class="label">Queue · {{ queue().length }}</span>
+      @if (queue().length > 0 && t.gate === 'manual') {
+        <button class="sendnext" type="button" (click)="sendNext()">Send next →</button>
+      } @else if (queue().length > 0) {
+        <span class="ghint">auto — next sends when the turn ends</span>
+      } @else {
+        <span class="ghint">gate: {{ t.gate }}</span>
+      }
+    </div>
+    @if (queue().length === 0) {
+      <p class="qempty">No queued messages. Sent while busy, they wait here and drag to reorder.</p>
+    } @else {
+      <div cdkDropList class="qlist" (cdkDropListDropped)="drop($event)">
+        @for (entry of queue(); track entry.id) {
+          <div cdkDrag class="qitem">
+            <span class="grip" cdkDragHandle>⠿</span>
+            @if (editingId() === entry.id) {
+              <textarea
+                class="qedit"
+                rows="2"
+                [value]="editText()"
+                (input)="onEditInput($event)"
+              ></textarea>
+              <button class="iconbtn good" type="button" (click)="saveEdit(entry.id)">✓</button>
+              <button class="iconbtn" type="button" (click)="cancelEdit()">✕</button>
+            } @else {
+              <span class="qbody" (dblclick)="startEdit(entry)">{{ entry.body }}</span>
+              <button class="iconbtn" type="button" (click)="startEdit(entry)" title="Edit">✎</button>
+              <button class="iconbtn" type="button" (click)="cancel(entry.id)" title="Cancel">✕</button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <ac-composer-panel />
+} @else {
+  <div class="placeholder">
+    <p class="big">No session selected</p>
+    <p class="small">Pick a session on the left, or start Claude Code / Codex in a terminal.</p>
+  </div>
+}

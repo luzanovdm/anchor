@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { AgentAdapter, TranscriptEvent } from '@anchor/core';
-import { isRecord, newestJsonl, parseTimestamp } from './jsonl.js';
+import { isRecord, listJsonlByMtime, newestJsonl, parseTimestamp } from './jsonl.js';
 
 /**
  * Claude Code adapter.
@@ -14,9 +14,16 @@ export class ClaudeAdapter implements AgentAdapter {
   readonly injectStrategies = ['tty', 'clipboard'] as const;
 
   async locateTranscript(cwd: string): Promise<string | null> {
+    return newestJsonl(this.projectDir(cwd));
+  }
+
+  async listTranscripts(cwd: string): Promise<readonly string[]> {
+    return listJsonlByMtime(this.projectDir(cwd));
+  }
+
+  private projectDir(cwd: string): string {
     const slug = cwd.replace(/\//g, '-');
-    const dir = join(homedir(), '.claude', 'projects', slug);
-    return newestJsonl(dir);
+    return join(homedir(), '.claude', 'projects', slug);
   }
 
   sessionId(transcriptPath: string | null, pid: number): string {
@@ -33,17 +40,38 @@ export class ClaudeAdapter implements AgentAdapter {
 
     if (type === 'assistant') {
       const blocks = messageContent(obj);
-      const hasToolUse = blocks.some((b) => b === 'tool_use');
-      const hasText = blocks.some((b) => b === 'text');
+      const hasToolUse = blocks.some((b) => b.type === 'tool_use');
+      const hasText = blocks.some((b) => b.type === 'text');
+      const text = blockText(blocks);
       // assistant text with no pending tool call = the visible end of a turn
-      return { role: hasToolUse ? 'tool' : 'assistant', ts, isFinalAssistant: hasText && !hasToolUse };
+      return {
+        role: hasToolUse ? 'tool' : 'assistant',
+        ts,
+        isFinalAssistant: hasText && !hasToolUse,
+        ...(text.length > 0 ? { text } : {}),
+      };
     }
     if (type === 'user') {
       const blocks = messageContent(obj);
-      const isToolResult = blocks.some((b) => b === 'tool_result');
-      return { role: isToolResult ? 'tool' : 'user', ts, isFinalAssistant: false };
+      const isToolResult = blocks.some((b) => b.type === 'tool_result');
+      const text = blockText(blocks);
+      return {
+        role: isToolResult ? 'tool' : 'user',
+        ts,
+        isFinalAssistant: false,
+        ...(text.length > 0 && !isToolResult ? { text } : {}),
+      };
     }
     return null; // system / summary / meta lines are noise
+  }
+
+  extractTitle(raw: string): string | null {
+    const obj: unknown = JSON.parse(raw);
+    if (!isRecord(obj)) return null;
+    if (obj['type'] === 'summary' && typeof obj['summary'] === 'string') {
+      return obj['summary'];
+    }
+    return null;
   }
 
   formatForInject(body: string, attachmentAbsPaths: readonly string[]): string {
@@ -53,16 +81,32 @@ export class ClaudeAdapter implements AgentAdapter {
   }
 }
 
-/** Collect the `type` of each content block in `obj.message.content`. */
-function messageContent(obj: Record<string, unknown>): string[] {
+interface ContentBlock {
+  readonly type: string;
+  readonly text: string;
+}
+
+/** Collect content blocks (type + any text) from `obj.message.content`. */
+function messageContent(obj: Record<string, unknown>): ContentBlock[] {
   const message = obj['message'];
   if (!isRecord(message)) return [];
   const content = message['content'];
-  if (typeof content === 'string') return ['text'];
+  if (typeof content === 'string') return [{ type: 'text', text: content }];
   if (!Array.isArray(content)) return [];
-  const types: string[] = [];
+  const blocks: ContentBlock[] = [];
   for (const block of content) {
-    if (isRecord(block) && typeof block['type'] === 'string') types.push(block['type']);
+    if (!isRecord(block) || typeof block['type'] !== 'string') continue;
+    const text = typeof block['text'] === 'string' ? block['text'] : '';
+    blocks.push({ type: block['type'], text });
   }
-  return types;
+  return blocks;
+}
+
+/** Concatenate the text of all text blocks. */
+function blockText(blocks: readonly ContentBlock[]): string {
+  return blocks
+    .filter((b) => b.type === 'text')
+    .map((b) => b.text)
+    .join('')
+    .trim();
 }

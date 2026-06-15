@@ -19,6 +19,8 @@ export interface SessionInfo {
   readonly key: SessionKey;
   readonly agent: AgentKind;
   readonly cwd: string;
+  /** git branch of `cwd`, when it is a repo */
+  readonly branch: string | null;
   readonly pid: number;
   readonly tty: string | null;
   readonly transcriptPath: string | null;
@@ -34,6 +36,30 @@ export interface SessionInfo {
 
 /** `auto` = transcript-driven gate; `manual` = user presses "Send next". */
 export type GateMode = 'auto' | 'manual';
+
+/** One message in a session's transcript (for the inspector view). */
+export interface TranscriptMessage {
+  readonly role: 'user' | 'assistant' | 'tool';
+  readonly text: string;
+  readonly ts: number;
+}
+
+/** Watcher-derived live view of a session's content. */
+export interface SessionLiveView {
+  readonly key: SessionKey;
+  /** session title/summary, when the agent provides one */
+  readonly title: string | null;
+  readonly turnState: TurnState;
+  /** the agent's most recent assistant text — "what's in the session now" */
+  readonly lastOutput: string | null;
+  /** recent conversation, oldest → newest */
+  readonly history: readonly TranscriptMessage[];
+}
+
+/** Full inspector payload: live view + the messages Anchor has dispatched. */
+export interface SessionInspect extends SessionLiveView {
+  readonly sent: readonly QueueEntry[];
+}
 
 export interface DraftMeta {
   readonly id: string;
@@ -83,6 +109,9 @@ export interface QueueEntry {
 export interface InjectResult {
   readonly ok: boolean;
   readonly strategy: 'tty' | 'clipboard';
+  /** true when the message was only staged on the clipboard for the user to
+   *  paste manually (GUI sessions we can't reliably drive). */
+  readonly manual?: boolean;
   readonly error?: string;
 }
 
@@ -115,17 +144,23 @@ export interface AnchorBridge {
     list(): Promise<readonly SessionInfo[]>;
     /** live updates; returns an unsubscribe function */
     subscribe(cb: (sessions: readonly SessionInfo[]) => void): () => void;
+    /** title, current output, conversation history + dispatched messages */
+    inspect(sessionKey: SessionKey): Promise<SessionInspect | null>;
   };
   readonly dispatch: {
     /** send a draft to a session: inject if idle+empty, else enqueue */
     send(sessionKey: SessionKey, draftId: string): Promise<void>;
     /** manual gate: force-send the head of the queue */
     sendNext(sessionKey: SessionKey): Promise<InjectResult | null>;
+    /** steer: inject a draft immediately, mid-turn, bypassing the queue/gate */
+    steer(sessionKey: SessionKey, draftId: string): Promise<InjectResult | null>;
     setGate(sessionKey: SessionKey, mode: GateMode): Promise<void>;
   };
   readonly queue: {
     list(sessionKey: SessionKey): Promise<readonly QueueEntry[]>;
     cancel(sessionKey: SessionKey, entryId: string): Promise<void>;
+    /** edit a still-queued message's body before it is sent */
+    edit(sessionKey: SessionKey, entryId: string, body: string): Promise<void>;
     reorder(sessionKey: SessionKey, entryId: string, toIndex: number): Promise<void>;
   };
 }
@@ -143,11 +178,14 @@ export const IPC = {
   skillsList: 'skills:list',
   sessionsList: 'sessions:list',
   sessionsChanged: 'sessions:changed',
+  sessionsInspect: 'sessions:inspect',
   dispatchSend: 'dispatch:send',
   dispatchSendNext: 'dispatch:sendNext',
+  dispatchSteer: 'dispatch:steer',
   dispatchSetGate: 'dispatch:setGate',
   queueList: 'queue:list',
   queueCancel: 'queue:cancel',
+  queueEdit: 'queue:edit',
   queueReorder: 'queue:reorder',
 } as const;
 

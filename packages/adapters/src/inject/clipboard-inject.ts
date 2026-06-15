@@ -18,6 +18,12 @@ export class ClipboardInjector implements Injector {
   async inject(target: InjectTarget, payload: string): Promise<InjectResult> {
     try {
       await pbcopy(payload);
+      // GUI sessions (no tty) have multiple windows we can't target, and Enter
+      // often won't submit — so we only stage on the clipboard for a manual
+      // paste rather than pasting into the wrong window.
+      if (target.tty === null && typeof target.app === 'string' && target.app.length > 0) {
+        return { ok: true, strategy: 'clipboard', manual: true };
+      }
       const appPid = await terminalPidFor(target);
       await activatePid(appPid ?? target.pid);
       await keystrokePaste();

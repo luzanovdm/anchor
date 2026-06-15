@@ -32,8 +32,18 @@ function createWindow(): void {
   if (devUrl !== undefined && devUrl.length > 0) {
     void win.loadURL(devUrl);
   } else {
-    void win.loadFile(join(here, '..', 'renderer', 'index.html'));
+    void win.loadFile(rendererIndex());
   }
+}
+
+/** Locate the built renderer index for both packaged and unpackaged runs. */
+function rendererIndex(): string {
+  if (app.isPackaged) {
+    // electron-builder copies the renderer into Resources/renderer
+    return join(process.resourcesPath, 'renderer', 'index.html');
+  }
+  // dev: apps/main/dist/main.js → apps/renderer/dist/renderer/index.html
+  return join(here, '..', '..', 'renderer', 'dist', 'renderer', 'index.html');
 }
 
 app.whenReady().then(async () => {

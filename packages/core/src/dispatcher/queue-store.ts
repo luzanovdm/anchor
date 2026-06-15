@@ -43,6 +43,15 @@ export class QueueStore {
     );
   }
 
+  /** Edit the body of a still-queued entry. */
+  async edit(sessionKey: SessionKey, entryId: string, body: string): Promise<void> {
+    const all = await this.list(sessionKey);
+    const next = all.map((e) =>
+      e.id === entryId && e.status === 'queued' ? { ...e, body } : e,
+    );
+    await rewriteJsonl(this.paths.queueFile(sessionKey), next);
+  }
+
   /** Reorder a still-queued entry; sent/failed entries keep their order. */
   async reorder(sessionKey: SessionKey, entryId: string, toIndex: number): Promise<void> {
     const all = await this.list(sessionKey);

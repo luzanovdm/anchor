@@ -13,6 +13,7 @@ import {
   type InjectResult,
   type PreparedMessage,
   type SessionInfo,
+  type SessionInspect,
   type SessionKey,
   type Skill,
 } from '@anchor/core';
@@ -114,6 +115,14 @@ export class Services {
   listSessions(): readonly SessionInfo[] {
     return this.registry.snapshot();
   }
+
+  async inspectSession(key: SessionKey): Promise<SessionInspect | null> {
+    const view = this.watcher.inspect(key);
+    if (view === null) return null;
+    const all = await this.queue.list(key);
+    const sent = all.filter((e) => e.status !== 'queued').reverse();
+    return { ...view, sent };
+  }
   setGate(key: SessionKey, mode: GateMode): void {
     this.registry.setGate(key, mode);
   }
@@ -134,6 +143,15 @@ export class Services {
 
   sendNext(key: SessionKey): Promise<InjectResult | null> {
     return this.dispatcher.sendNext(key);
+  }
+
+  async steer(key: SessionKey, draftId: string): Promise<InjectResult> {
+    const message = await this.prepare(draftId);
+    return this.dispatcher.steer(key, message);
+  }
+
+  editQueue(key: SessionKey, entryId: string, body: string): Promise<void> {
+    return this.queue.edit(key, entryId, body);
   }
 
   /** Build the durable message: rendered body + relative attachment paths. */
