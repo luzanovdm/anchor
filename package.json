@@ -1,0 +1,33 @@
+{
+  "name": "anchor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Durable composer & dispatcher for AI agent sessions — never lose a message",
+  "license": "MIT",
+  "author": "Dmitry Luzanov",
+  "workspaces": [
+    "packages/core",
+    "packages/adapters",
+    "packages/ui-kit",
+    "apps/main",
+    "apps/renderer"
+  ],
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc -b --noEmit packages/core packages/adapters apps/main && npm --workspace apps/renderer run typecheck",
+    "build:core": "tsc -b packages/core packages/adapters apps/main",
+    "build:renderer": "npm --workspace apps/renderer run build",
+    "build": "npm run build:core && npm run build:renderer",
+    "dev": "node scripts/dev.mjs",
+    "dist": "npm run build && electron-builder --mac"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "eslint": "^9.17.0",
+    "typescript": "~5.6.3"
+  }
+}

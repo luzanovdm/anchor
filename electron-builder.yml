@@ -1,0 +1,23 @@
+appId: app.anchor.desktop
+productName: Anchor
+directories:
+  output: release
+  buildResources: build
+files:
+  - from: apps/main/dist
+    to: .
+  - from: packages/core/dist
+    to: node_modules/@anchor/core/dist
+  - from: packages/adapters/dist
+    to: node_modules/@anchor/adapters/dist
+extraResources:
+  - from: apps/renderer/dist/renderer
+    to: renderer
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - dmg
+  hardenedRuntime: true
+  gatekeeperAssess: false
+dmg:
+  title: Anchor ${version}
