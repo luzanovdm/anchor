@@ -8,6 +8,9 @@ export interface TranscriptEvent {
   readonly isFinalAssistant: boolean;
   /** human-readable text of the message, when present (for the inspector) */
   readonly text?: string;
+  /** explicit turn lifecycle, when the agent emits it (authoritative over the
+   *  quiet/CPU heuristic — e.g. Codex `task_started` / `task_complete`). */
+  readonly turnBoundary?: 'start' | 'end';
 }
 
 export type InjectStrategyKind = 'tty' | 'clipboard';

@@ -18,13 +18,14 @@ export class ClipboardInjector implements Injector {
   async inject(target: InjectTarget, payload: string): Promise<InjectResult> {
     try {
       await pbcopy(payload);
-      // process-less GUI sessions (no tty): focus the app by name
+      // GUI sessions (no tty) have multiple windows we can't target, and Enter
+      // often won't submit — so we only stage on the clipboard for a manual
+      // paste rather than pasting into the wrong window.
       if (target.tty === null && typeof target.app === 'string' && target.app.length > 0) {
-        await activateApp(target.app);
-      } else {
-        const appPid = await terminalPidFor(target);
-        await activatePid(appPid ?? target.pid);
+        return { ok: true, strategy: 'clipboard', manual: true };
       }
+      const appPid = await terminalPidFor(target);
+      await activatePid(appPid ?? target.pid);
       await keystrokePaste();
       return { ok: true, strategy: 'clipboard' };
     } catch (err) {
@@ -72,10 +73,6 @@ async function commOf(pid: number): Promise<string | null> {
   } catch {
     return null;
   }
-}
-
-async function activateApp(name: string): Promise<void> {
-  await exec('osascript', ['-e', `tell application "${name}" to activate`]);
 }
 
 async function activatePid(pid: number): Promise<void> {

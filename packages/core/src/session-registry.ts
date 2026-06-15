@@ -66,6 +66,9 @@ export class SessionRegistry extends EventEmitter<RegistryEvents> {
   }
 
   gateOf(key: SessionKey): GateMode {
+    // GUI (process-less) sessions are copy-only and user-driven — never auto
+    const session = this.discovered.get(key);
+    if (session !== undefined && session.pid === 0) return 'manual';
     return this.gateOverride.get(key) ?? 'auto';
   }
 

@@ -77,24 +77,37 @@ export class CodexAdapter implements AgentAdapter, TranscriptDiscoverable {
     const obj: unknown = JSON.parse(raw);
     if (!isRecord(obj)) return null;
     const ts = parseTimestamp(obj['timestamp'] ?? obj['ts'], Date.now());
+    const outerType = stringField(obj, 'type');
     // codex wraps the real record in `payload`; fall back to the top level
     const payload = isRecord(obj['payload']) ? obj['payload'] : obj;
-    const pType = stringField(payload, 'type') ?? stringField(obj, 'type');
+    const pType = stringField(payload, 'type') ?? outerType;
     const role = stringField(payload, 'role') ?? stringField(obj, 'role');
 
-    // a function/tool call or its output means the turn is still running
-    if (pType !== null && /(function_call|call_output|reasoning|tool)/.test(pType)) {
+    // explicit turn lifecycle is authoritative for idle/working
+    if (pType === 'task_started') {
+      return { role: 'tool', ts, isFinalAssistant: false, turnBoundary: 'start' };
+    }
+    if (pType === 'task_complete' || pType === 'turn_aborted') {
+      return { role: 'assistant', ts, isFinalAssistant: true, turnBoundary: 'end' };
+    }
+    // tool activity = mid-turn
+    if (pType !== null && /(function_call|call_output|reasoning|custom_tool|tool_search)/.test(pType)) {
       return { role: 'tool', ts, isFinalAssistant: false };
+    }
+    // agent_message is the streamed duplicate of response_item/message — count
+    // it as activity but take history text only from the canonical message
+    if (pType === 'agent_message') {
+      return { role: 'assistant', ts, isFinalAssistant: false };
     }
     if (role === 'assistant') {
       const text = codexText(payload);
-      return { role: 'assistant', ts, isFinalAssistant: true, ...(text ? { text } : {}) };
+      return { role: 'assistant', ts, isFinalAssistant: false, ...(text ? { text } : {}) };
     }
-    if (role === 'user') {
+    if (role === 'user' || pType === 'user_message') {
       const text = codexText(payload);
       return { role: 'user', ts, isFinalAssistant: false, ...(text ? { text } : {}) };
     }
-    // developer/system prompts and event_msg bookkeeping are noise
+    // token_count, turn_context, session_meta, developer prompts → noise
     return null;
   }
 
@@ -164,6 +177,8 @@ async function readSessionMeta(path: string): Promise<CodexMeta | null> {
 function codexText(payload: Record<string, unknown>): string {
   const direct = payload['text'];
   if (typeof direct === 'string') return direct.trim();
+  const message = payload['message'];
+  if (typeof message === 'string') return message.trim();
   const content = payload['content'];
   if (typeof content === 'string') return content.trim();
   if (!Array.isArray(content)) return '';

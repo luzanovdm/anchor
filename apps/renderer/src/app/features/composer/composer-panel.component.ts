@@ -81,6 +81,8 @@ export class ComposerPanelComponent {
   }
 
   readonly isWorking = computed(() => this.target()?.turnState === 'working');
+  /** GUI sessions (no process): Send copies to the clipboard for manual paste. */
+  readonly isGui = computed(() => this.target()?.pid === 0);
 
   send(): void {
     void this.store.send();

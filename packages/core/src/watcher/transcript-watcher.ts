@@ -120,6 +120,23 @@ export class TranscriptWatcher extends EventEmitter<WatcherEvents> {
   private async evaluate(t: Tracked, now: number): Promise<void> {
     const grew = await this.drainNewLines(t, now);
 
+    // explicit lifecycle events (e.g. Codex task_complete) are authoritative and
+    // override the quiet/CPU heuristic — needed for process-less GUI sessions.
+    const boundary = t.lastEvent?.turnBoundary;
+    if (boundary === 'end') {
+      this.setState(t, 'idle');
+      if (!t.finalizedForCurrentTurn) {
+        t.finalizedForCurrentTurn = true;
+        this.emit('turn-finalized', t.key);
+      }
+      return;
+    }
+    if (boundary === 'start') {
+      this.setState(t, 'working');
+      t.finalizedForCurrentTurn = false;
+      return;
+    }
+
     if (grew) {
       // any growth means the turn is still in progress (thinking or tool-loop)
       this.setState(t, 'working');

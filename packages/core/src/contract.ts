@@ -109,6 +109,9 @@ export interface QueueEntry {
 export interface InjectResult {
   readonly ok: boolean;
   readonly strategy: 'tty' | 'clipboard';
+  /** true when the message was only staged on the clipboard for the user to
+   *  paste manually (GUI sessions we can't reliably drive). */
+  readonly manual?: boolean;
   readonly error?: string;
 }
 

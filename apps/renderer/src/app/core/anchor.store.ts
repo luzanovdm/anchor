@@ -5,6 +5,7 @@ import type {
   Draft,
   DraftMeta,
   GateMode,
+  InjectResult,
   QueueEntry,
   SessionInfo,
   SessionInspect,
@@ -181,6 +182,15 @@ export class AnchorStore {
     const draft = this.currentDraft();
     const target = this.targetSession();
     if (draft === null || target === null || draft.body.trim().length === 0) return;
+
+    // GUI sessions (no process) can't be driven — stage on the clipboard now
+    if (target.pid === 0) {
+      const result = await anchor.dispatch.steer(target.key, draft.meta.id);
+      this.toastInject(result, target);
+      await this.refreshTarget();
+      return; // keep the draft so the user can re-copy if the paste misfires
+    }
+
     await anchor.dispatch.send(target.key, draft.meta.id);
     const where = `${target.agent} · ${projectName(target)}`;
     if (target.turnState === 'idle' && target.queued === 0) {
@@ -198,10 +208,22 @@ export class AnchorStore {
     const target = this.targetSession();
     if (draft === null || target === null || draft.body.trim().length === 0) return;
     const result = await anchor.dispatch.steer(target.key, draft.meta.id);
-    if (result?.ok) this.pushToast(`Steered ${target.agent} · ${projectName(target)}`, 'success');
-    else this.pushToast(`Steer failed: ${result?.error ?? 'unknown'}`, 'danger');
-    await this.createDraft();
+    this.toastInject(result, target);
+    if (target.pid !== 0) await this.createDraft();
     await this.refreshTarget();
+  }
+
+  private toastInject(result: InjectResult | null, target: SessionInfo): void {
+    const where = `${target.agent} · ${projectName(target)}`;
+    if (result === null) {
+      this.pushToast('Queue is empty', 'info');
+    } else if (!result.ok) {
+      this.pushToast(`Inject failed: ${result.error ?? 'unknown'}`, 'danger');
+    } else if (result.manual === true) {
+      this.pushToast(`Copied — paste into ${target.agent} (⌘V) and send`, 'info');
+    } else {
+      this.pushToast(`Sent to ${where}`, 'success');
+    }
   }
 
   async editQueueEntry(entryId: string, body: string): Promise<void> {
@@ -213,9 +235,8 @@ export class AnchorStore {
 
   async sendNext(key: SessionKey): Promise<void> {
     const result = await anchor.dispatch.sendNext(key);
-    if (result === null) this.pushToast('Queue is empty', 'info');
-    else if (result.ok) this.pushToast(`Sent via ${result.strategy}`, 'success');
-    else this.pushToast(`Inject failed: ${result.error ?? 'unknown'}`, 'danger');
+    const target = this.liveSessions().find((s) => s.key === key);
+    if (target !== undefined) this.toastInject(result, target);
     await this.refreshTarget();
   }
 

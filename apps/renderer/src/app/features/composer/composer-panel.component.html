@@ -32,7 +32,7 @@
     <span class="counts">{{ counts().lines }}L · {{ counts().chars }}C</span>
     <span class="grow"></span>
     <div class="send">
-      @if (isWorking()) {
+      @if (isWorking() && !isGui()) {
         <button
           ttButton
           variant="secondary"
@@ -46,7 +46,7 @@
       }
       <button ttButton variant="primary" [disabled]="!canSend()" (click)="send()">
         @if (target(); as t) {
-          Send to {{ targetLabel(t) }}
+          {{ isGui() ? 'Copy for' : 'Send to' }} {{ targetLabel(t) }}
         } @else {
           No session
         }
