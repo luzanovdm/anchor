@@ -1,0 +1,29 @@
+<header class="head">
+  <span class="title">{{ draft()?.meta?.title || 'Untitled' }}</span>
+  <span class="save" [class.is-busy]="saving()">{{ saving() ? 'saving…' : 'saved' }}</span>
+  <button ttButton variant="secondary" size="sm" (click)="newDraft()">New</button>
+</header>
+
+@if (skills().length > 0) {
+  <div class="skills">
+    @for (skill of skills(); track skill.id) {
+      <button
+        class="chip"
+        type="button"
+        [class.is-active]="isSelected(skill.id)"
+        (click)="toggleSkill(skill.id)"
+      >
+        {{ skill.label }}
+      </button>
+    }
+  </div>
+}
+
+<div class="editor">
+  <ac-composer-editor
+    #editor
+    [initialDoc]="initialDoc()"
+    (docChange)="onDocChange($event)"
+    (fileDropped)="onFileDropped($event)"
+  />
+</div>

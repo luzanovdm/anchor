@@ -1,0 +1,57 @@
+@use 'sass:meta';
+
+// Apply `corner-shape: squircle` ONLY when the browser actually supports it.
+// Plain WebKit/iOS Safari ignores the property cleanly when wrapped in
+// @supports, falling back to whatever `border-radius` is set alongside.
+// Without the @supports guard, some Safari builds render unpredictably —
+// sometimes correct rounded corners, sometimes near-sharp corners — because
+// they partially recognise the property without honouring the shape.
+@mixin squircle {
+  @supports (corner-shape: squircle) {
+    corner-shape: squircle;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  @if $gap != 0 {
+    gap: var(--tt-space-#{$gap});
+  }
+}
+
+@mixin bento-grid($min-col: 300px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-col, 1fr));
+  gap: var(--tt-space-6);
+}
+
+// Mobile-first breakpoint mixin. Pass a named tier (sm/md/lg/xl/2xl) or a
+// numeric value for component-specific tweak points. Always min-width — every
+// query represents "this size or wider", so base styles target mobile and
+// each breakpoint layers on overrides.
+@mixin breakpoint($size) {
+  @if $size == sm { @media (min-width: 640px) { @content; } }
+  @else if $size == md { @media (min-width: 768px) { @content; } }
+  @else if $size == lg { @media (min-width: 1024px) { @content; } }
+  @else if $size == xl { @media (min-width: 1280px) { @content; } }
+  @else if $size == 2xl { @media (min-width: 1536px) { @content; } }
+  @else if meta.type-of($size) == number {
+    @media (min-width: $size) { @content; }
+  }
+  @else {
+    @error "Unknown breakpoint #{$size}";
+  }
+}

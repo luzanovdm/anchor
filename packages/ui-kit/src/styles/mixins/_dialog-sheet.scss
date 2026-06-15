@@ -1,0 +1,140 @@
+@use 'layout' as layout;
+
+/// Mobile-as-bottom-sheet treatment for a CDK Dialog's host element.
+///
+/// Mobile-first: the host renders as a full-width sheet anchored to the
+/// bottom edge of the viewport (rounded top corners only, safe-area
+/// padding, slide-up animation). From `md` upward the host returns to a
+/// centred modal at `$desktop-width`.
+///
+/// Use in tandem with `mobile-sheet-pane` on the dialog's
+/// `panelClass` — the pane override pins the CDK overlay to the bottom
+/// of the viewport so this host can stretch to it.
+///
+/// @param {Length} $desktop-width  - card width at md+
+@mixin mobile-sheet-card($desktop-width: min(560px, 90vw)) {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-radius: var(--tt-radius-xl) var(--tt-radius-xl) 0 0;
+  animation: tt-sheet-up 280ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+
+  @include layout.breakpoint(md) {
+    display: block;
+    width: $desktop-width;
+    max-height: 90vh;
+    padding-bottom: 0;
+    border-radius: var(--tt-radius-lg);
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/// Companion mobile-as-bottom-sheet treatment for a CDK Dialog's pane.
+/// Pins the pane to the bottom of the viewport on mobile so the host
+/// (using `mobile-sheet-card`) can render edge-to-edge. Restores CDK
+/// GlobalPositionStrategy's centred layout at md+.
+///
+/// Apply to the `.tt-<flow>-pane` selector in a global stylesheet
+/// (Angular's view encapsulation does not reach CDK overlay panes).
+@mixin mobile-sheet-pane {
+  position: fixed !important;
+  inset: auto 0 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+
+  @include layout.breakpoint(md) {
+    position: static !important;
+    inset: auto !important;
+    width: auto !important;
+    max-width: 100vw !important;
+  }
+}
+
+/// Promote an inline router-outlet host into a bottom-sheet below
+/// `$desktop-bp`. Used by category / budgets / recurring / goals where
+/// the detail content otherwise renders inline below a list and
+/// confuses the user — they tap a card and visually nothing happens.
+///
+/// Apply to a wrapper element that contains the outlet. Pair with a
+/// conditionally-rendered backdrop sibling styled via
+/// `inline-detail-sheet-backdrop` and a `[routerLink]` back to the
+/// list URL so tapping outside the sheet dismisses it.
+///
+/// @param {Length} $desktop-bp - breakpoint where the layout returns
+///                               to inline (default 901px).
+@mixin inline-detail-as-sheet($desktop-bp: 901px) {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 41;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--tt-bg-primary);
+  border-top-left-radius: var(--tt-radius-xl);
+  border-top-right-radius: var(--tt-radius-xl);
+  box-shadow: var(--tt-shadow-xl);
+  animation: tt-sheet-up 280ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  @include layout.breakpoint($desktop-bp) {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    max-height: none;
+    overflow-y: visible;
+    padding-bottom: 0;
+    background: transparent;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: none;
+    animation: none;
+  }
+}
+
+/// Companion backdrop styling for `inline-detail-as-sheet`. The
+/// component owns the @if that conditionally inserts the element; this
+/// mixin just provides the fixed-position chrome.
+///
+/// @param {Length} $desktop-bp - breakpoint where the backdrop hides
+///                               (default 901px).
+@mixin inline-detail-sheet-backdrop($desktop-bp: 901px) {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--tt-overlay-md, color-mix(in srgb, var(--tt-text-primary) 28%, transparent));
+  animation: tt-sheet-backdrop-in 200ms ease forwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  @include layout.breakpoint($desktop-bp) {
+    display: none !important;
+  }
+}
+
+@keyframes tt-sheet-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tt-sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

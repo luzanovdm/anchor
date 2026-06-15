@@ -1,0 +1,11 @@
+<span class="icon" aria-hidden="true">
+  <ng-content select="[icon]" />
+</span>
+<div class="content">
+  @if (title()) {
+    <p class="title">{{ title() }}</p>
+  }
+  <div class="body">
+    <ng-content />
+  </div>
+</div>

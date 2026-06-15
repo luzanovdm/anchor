@@ -1,0 +1,111 @@
+@use 'layout' as m;
+
+@mixin glass-surface(
+  $blur: var(--tt-glass-blur),
+  $fallback-rgba: var(--tt-bg-secondary),
+  $saturate: var(--tt-glass-saturate),
+  $include-noise: true
+) {
+  background: var(--tt-glass-bg);
+  border: 1px solid var(--tt-glass-border);
+  box-shadow: var(--tt-glass-shadow);
+
+  @media (hover: hover) and (pointer: fine) {
+    backdrop-filter: $blur $saturate;
+  }
+
+  @media (hover: none), (pointer: coarse), (prefers-reduced-transparency: reduce) {
+    background: $fallback-rgba;
+    backdrop-filter: none;
+  }
+
+  @if $include-noise {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      @include m.squircle;
+      background-image: url('/assets/noise.svg');
+      background-repeat: repeat;
+      opacity: var(--tt-noise-opacity);
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: $fallback-rgba;
+    opacity: 0.95;
+
+    @if $include-noise {
+      &::before {
+        display: none;
+      }
+    }
+  }
+}
+
+@mixin card($padding: 6) {
+  background: var(--tt-bg-secondary);
+  border-radius: var(--tt-radius-lg);
+  @include m.squircle;
+  box-shadow: var(--tt-shadow-sm);
+  border: 1px solid var(--tt-border-subtle);
+  padding: var(--tt-space-#{$padding});
+}
+
+// Glass surface field token overrides.
+// CSS custom properties cascade through Angular encapsulation.
+// Apply on any glass container element (e.g. modal .panel).
+// Values come from --tt-glass-field-* tokens in tokens.scss (light/dark theme-aware).
+@mixin glass-field-overrides {
+  --tt-field-bg: var(--tt-glass-field-bg);
+  --tt-field-shadow: var(--tt-glass-field-shadow);
+  --tt-field-shadow-focus: var(--tt-glass-field-shadow-focus);
+  --tt-field-shadow-error: var(--tt-glass-field-shadow-error);
+}
+
+// Ghost control: removes visual chrome (border, shadow, bg) for controls embedded
+// inside a host container that already provides its own surface.
+// Keeps all interactive states (hover, focus, active, disabled).
+@mixin ghost-control {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-radius: var(--tt-radius-sm);
+
+  &:hover:not(:disabled, :focus) {
+    background: var(--tt-field-ghost-hover-bg);
+  }
+
+  &:focus,
+  &:focus-within {
+    background: var(--tt-field-ghost-focus-bg);
+    box-shadow: none;
+    outline: none;
+  }
+
+  &:active:not(:disabled) {
+    background: var(--tt-field-ghost-active-bg);
+  }
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.4;
+    background: transparent;
+    cursor: not-allowed;
+  }
+}
+
+@mixin card-hover {
+  transition: box-shadow var(--tt-transition-base);
+
+  &:hover {
+    box-shadow: var(--tt-shadow-md);
+  }
+
+  &:active {
+    box-shadow: var(--tt-shadow-xs);
+  }
+}

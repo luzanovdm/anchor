@@ -1,0 +1,19 @@
+<div class="container">
+  @if (variant() === 'blueprint') {
+    <span class="blueprint-cell" aria-hidden="true"></span>
+  }
+  <ng-content select="[ttIcon]" />
+  @if (resolvedTitle()) {
+    <h3 class="heading">{{ resolvedTitle() }}</h3>
+  }
+  @if (resolvedDescription()) {
+    <p class="description">{{ resolvedDescription() }}</p>
+  }
+  @if (resolvedCtaLabel(); as label) {
+    <button ttButton class="cta" (click)="onCtaClick()">{{ label }}</button>
+  }
+  <div class="actions">
+    <ng-content select="[ttEmptyStateActions]" />
+  </div>
+  <ng-content />
+</div>

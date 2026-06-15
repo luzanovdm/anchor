@@ -1,0 +1,82 @@
+:host {
+  --c-fg: var(--tt-info);
+  --c-bg: var(--tt-info-light);
+  --c-bd: var(--tt-info-light);
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--tt-space-3);
+  padding: var(--tt-space-4) var(--tt-space-5);
+  background: var(--c-bg);
+  border: 1px solid var(--c-bd);
+  border-inline-start: 3px solid var(--c-fg);
+  border-radius: var(--tt-radius-md);
+  color: var(--tt-text-primary);
+}
+
+:host(.tone-success) {
+  --c-fg: var(--tt-success);
+  --c-bg: var(--tt-success-light);
+  --c-bd: var(--tt-success-light);
+}
+
+:host(.tone-warn) {
+  --c-fg: var(--tt-warning);
+  --c-bg: var(--tt-warning-light);
+  --c-bd: var(--tt-warning-light);
+}
+
+:host(.tone-danger) {
+  --c-fg: var(--tt-danger);
+  --c-bg: var(--tt-danger-light);
+  --c-bd: var(--tt-danger-light);
+}
+
+:host:not(:has(.icon > *)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: flex-start;
+  padding-block-start: 2px;
+  color: var(--c-fg);
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+:host:not(:has(.icon > *)) .icon {
+  display: none;
+}
+
+.icon :where(svg, ng-icon) {
+  inline-size: 18px;
+  block-size: 18px;
+}
+
+.title {
+  margin: 0 0 var(--tt-space-1);
+  font-size: var(--tt-text-sm);
+  font-weight: var(--tt-font-semibold, 600);
+  letter-spacing: 0.01em;
+  color: var(--c-fg);
+}
+
+.body {
+  color: var(--tt-text-secondary);
+  font-size: var(--tt-text-sm);
+  line-height: 1.6;
+}
+
+.body :where(code) {
+  font-family: var(--tt-font-family);
+  font-size: 0.85em;
+  background: var(--tt-bg-tertiary);
+  color: var(--tt-text-primary);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.body :where(a) {
+  color: var(--c-fg);
+  border-block-end: 1px dashed currentColor;
+}

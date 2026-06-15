@@ -1,0 +1,114 @@
+:root {
+  // --- Glass surfaces ---
+  --tt-glass-bg: rgba(255, 255, 255, 0.68);
+  --tt-glass-border: rgba(255, 255, 255, 0.45);
+  --tt-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  --tt-glass-blur: blur(20px);
+  --tt-glass-saturate: saturate(1.6);
+
+  // --- Glass shorthand tokens (used across toast, modal, dropdown, header) ---
+  // --surface-rgb resolves to the bg-secondary RGB triplet for alpha compositing
+  --surface-rgb: var(--tt-bg-secondary-rgb);
+  --glass-bg: rgba(var(--surface-rgb), 0.55);
+  --glass-blur: blur(14px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+
+  // --- Glow effects (light = none, zero cost) ---
+  --tt-glow-accent: none;
+  --tt-glow-success: none;
+  --tt-glow-danger: none;
+  --tt-glow-warning: none;
+  --tt-glow-text-accent: none;
+  --tt-glow-text-success: none;
+  --tt-glow-text-danger: none;
+  --tt-glow-text-warning: none;
+
+  // --- Cursor glow multiplier ---
+  --tt-glow-multiplier: 1;
+
+  // --- Field shadows (sunken inset style) ---
+  --tt-field-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.07), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  --tt-field-shadow-focus:
+    inset 0 1px 3px rgba(0, 0, 0, 0.07), inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 0 0 2px var(--tt-accent);
+  --tt-field-shadow-error:
+    inset 0 1px 3px rgba(0, 0, 0, 0.07), inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 0 0 1.5px rgba(220, 38, 38, 0.5);
+
+  // --- Float shadow — for floating panels (slide-over, popovers) ---
+  --tt-shadow-float: 0 24px 48px -12px rgba(0, 0, 0, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+
+  // --- Shadows (neutral, not slate-tinted) ---
+  --tt-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --tt-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --tt-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --tt-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.03);
+  --tt-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 8px 10px rgba(0, 0, 0, 0.04);
+  --tt-shadow-ring: 0 0 0 3px var(--tt-accent-subtle);
+
+  // Main content area shadow — sidebar/content separation
+  --tt-shadow-main: -6px 0 24px rgba(0, 0, 0, 0.12), -2px 0 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] {
+  // --- Glass surfaces (dark) ---
+  --tt-glass-bg: rgba(21, 23, 26, 0.72);
+  --tt-glass-border: rgba(255, 255, 255, 0.07);
+  --tt-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --tt-glass-blur: blur(20px);
+  --tt-glass-saturate: saturate(1.8);
+
+  // --- Glass shorthand overrides (dark) ---
+  --glass-bg: rgba(var(--surface-rgb), 0.45);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.07);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+
+  // --- Glow effects (dark = active) ---
+  --tt-glow-accent: 0 0 16px rgba(var(--tt-accent-rgb), 0.2);
+  --tt-glow-success: 0 0 10px rgba(52, 211, 153, 0.2);
+  --tt-glow-danger: 0 0 10px rgba(248, 113, 113, 0.2);
+  --tt-glow-warning: 0 0 10px rgba(251, 191, 36, 0.2);
+
+  --tt-glow-text-accent: 0 0 16px rgba(var(--tt-accent-rgb), 0.25);
+  --tt-glow-text-success: 0 0 12px rgba(52, 211, 153, 0.3);
+  --tt-glow-text-danger: 0 0 12px rgba(248, 113, 113, 0.25);
+  --tt-glow-text-warning: 0 0 12px rgba(251, 191, 36, 0.25);
+
+  // --- Cursor glow multiplier (dark: stronger) ---
+  --tt-glow-multiplier: 1.6;
+
+  // --- Field tokens (dark) ---
+  --tt-focus-ring: 0 0 0 2px var(--tt-accent);
+  --tt-focus-ring-outline: 2px solid var(--tt-accent);
+  --tt-focus-ring-border-color: var(--tt-accent);
+
+  // --- Glass field overrides (dark) ---
+  --tt-glass-field-bg: rgba(var(--tt-bg-secondary-rgb), 0.45);
+  --tt-glass-field-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --tt-glass-field-shadow-focus: 0 0 0 2px var(--tt-accent);
+  --tt-glass-field-shadow-error: 0 0 0 1.5px rgba(248, 113, 113, 0.55);
+
+  // --- Ghost control tokens (dark) ---
+  --tt-field-ghost-focus-bg: var(--tt-accent-subtle);
+
+  // --- Field shadows (dark, sunken inset style) ---
+  --tt-field-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --tt-field-shadow-focus:
+    inset 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 0 2px var(--tt-accent), 0 0 10px rgba(var(--tt-accent-rgb), 0.12);
+  --tt-field-shadow-error:
+    inset 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 0 1.5px rgba(248, 113, 113, 0.55);
+
+  --tt-shadow-float: 0 24px 60px -12px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+
+  --tt-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --tt-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --tt-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --tt-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
+  --tt-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5), 0 8px 10px rgba(0, 0, 0, 0.3);
+  --tt-shadow-ring: 0 0 0 3px var(--tt-accent-subtle);
+
+  --tt-shadow-main: -6px 0 24px rgba(0, 0, 0, 0.35), -2px 0 8px rgba(0, 0, 0, 0.2);
+}

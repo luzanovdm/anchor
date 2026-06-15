@@ -1,0 +1,132 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tt-space-1);
+  font-family: var(--tt-font-family);
+  font-weight: var(--tt-font-medium);
+  border-radius: var(--tt-radius-full);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+// --- Sizes ---
+
+:host(.tt-badge--sm) {
+  padding: 2px var(--tt-space-2);
+  font-size: 11px;
+}
+
+:host(.tt-badge--md) {
+  padding: var(--tt-space-1) var(--tt-space-3);
+  font-size: var(--tt-text-xs);
+}
+
+// --- Variants ---
+
+:host(.tt-badge--default) {
+  background: var(--tt-bg-tertiary);
+  color: var(--tt-text-secondary);
+}
+
+:host(.tt-badge--success) {
+  background: var(--tt-success-light);
+  color: var(--tt-success);
+}
+
+:host(.tt-badge--warning) {
+  background: var(--tt-warning-light);
+  color: var(--tt-warning);
+}
+
+:host(.tt-badge--danger) {
+  background: var(--tt-danger-light);
+  color: var(--tt-danger);
+}
+
+:host(.tt-badge--info) {
+  background: var(--tt-info-light);
+  color: var(--tt-info);
+}
+
+:host(.tt-badge--accent) {
+  background: var(--tt-accent-light);
+  color: var(--tt-accent);
+  box-shadow: var(--tt-glow-accent); // glow in dark mode, none in light
+}
+
+:host(.tt-badge--locale) {
+  background: var(--tt-accent-light);
+  color: var(--tt-accent);
+  font-family: var(--tt-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tt-tracking-wide);
+}
+
+:host(.tt-badge--mono) {
+  background: var(--tt-bg-tertiary);
+  color: var(--tt-text-secondary);
+  font-family: var(--tt-font-mono);
+}
+
+:host(.tt-badge--ghost) {
+  background: transparent;
+  color: var(--tt-text-secondary);
+  box-shadow: inset 0 0 0 1px var(--tt-border);
+}
+
+:host(.tt-badge--blueprint) {
+  background: var(--tt-bp-subtle);
+  border: 1px dashed var(--tt-bp-border);
+  color: var(--tt-bp);
+  font-family: var(--tt-font-mono);
+  letter-spacing: var(--tt-tracking-normal);
+  box-shadow: var(--tt-bp-glow);
+}
+
+:host(.tt-badge--blueprint)::before {
+  content: '';
+  inline-size: var(--tt-space-1);
+  block-size: var(--tt-space-1);
+  border-radius: var(--tt-radius-full);
+  background: var(--tt-bp);
+}
+
+// "Planned" marker — feature proposed by design, not yet implemented.
+// Prototype convention: monospace, uppercase, with a small target glyph.
+:host(.tt-badge--planned) {
+  background: var(--tt-planned-bg);
+  color: var(--tt-planned);
+  box-shadow: inset 0 0 0 1px var(--tt-planned-bg);
+  font-family: var(--tt-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tt-tracking-wide);
+  font-size: 9.5px;
+}
+
+:host(.tt-badge--planned)::before {
+  content: '⌖';
+  font-size: 11px;
+  line-height: 1;
+}
+
+// --- Pace variants ---
+
+:host(.tt-badge--pace-ahead) {
+  background: var(--tt-success-light);
+  color: var(--tt-success);
+}
+
+:host(.tt-badge--pace-on-track) {
+  background: var(--tt-accent-light);
+  color: var(--tt-accent);
+}
+
+:host(.tt-badge--pace-at-risk) {
+  background: var(--tt-warning-light);
+  color: var(--tt-warning);
+}
+
+:host(.tt-badge--pace-over) {
+  background: var(--tt-danger-light);
+  color: var(--tt-danger);
+}

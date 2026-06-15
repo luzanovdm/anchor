@@ -1,0 +1,40 @@
+@use 'styles/mixins' as m;
+
+:host {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--tt-space-3);
+  min-height: 48px;
+  padding: var(--tt-space-2);
+  border-radius: var(--tt-radius-sm);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color var(--tt-transition-fast),
+    box-shadow var(--tt-transition-fast);
+}
+
+:host(:hover) {
+  background: var(--tt-bg-hover);
+}
+
+:host(:focus-visible) {
+  outline: 2px solid var(--tt-accent);
+  outline-offset: 2px;
+}
+
+:host(.is-selected) {
+  background: var(--tt-accent-subtle);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tt-accent) 24%, transparent);
+}
+
+:host(.is-system) {
+  min-height: 40px;
+}
+
+@include m.breakpoint(sm) {
+  :host {
+    grid-template-columns: 44px 28px minmax(0, 1fr) minmax(112px, auto);
+  }
+}

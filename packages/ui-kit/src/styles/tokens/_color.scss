@@ -1,0 +1,262 @@
+:root {
+  // --- Colors: Light Theme (neutral gray + selectable accent) ---
+  --tt-bg-primary: #f8f8f8;
+  --tt-bg-secondary: #ffffff;
+  --tt-bg-tertiary: #f0f0f0;
+  --tt-bg-hover: #f0f0f0;
+  --tt-bg-active: #e5e5e5;
+  --tt-bg-sidebar: #f0f0f2;
+
+  --tt-text-primary: #111111;
+  --tt-text-secondary: #666666;
+  --tt-text-tertiary: #999999;
+  --tt-text-inverse: #ffffff;
+  --tt-text-link: var(--tt-accent);
+
+  --tt-accent-mint: #0d9488;
+  --tt-accent-mint-rgb: 13, 148, 136;
+  --tt-accent-blue: #2563eb;
+  --tt-accent-blue-rgb: 37, 99, 235;
+  --tt-accent-amber: #d97706;
+  --tt-accent-amber-rgb: 217, 119, 6;
+
+  --tt-accent: var(--tt-accent-blue);
+  --tt-accent-rgb: var(--tt-accent-blue-rgb);
+  --tt-accent-hover: color-mix(in srgb, var(--tt-accent) 86%, var(--tt-text-primary));
+  --tt-accent-active: color-mix(in srgb, var(--tt-accent) 72%, var(--tt-text-primary));
+  --tt-accent-light: rgba(var(--tt-accent-rgb), 0.12);
+  --tt-accent-subtle: rgba(var(--tt-accent-rgb), 0.08);
+  --tt-accent-bg: rgba(var(--tt-accent-rgb), 0.1);
+  --tt-glow-accent: none;
+
+  --tt-button-primary-bg: color-mix(in srgb, var(--tt-text-primary) 86%, var(--tt-bg-primary));
+  --tt-button-primary-fg: var(--tt-bg-primary);
+  --tt-button-primary-hover: color-mix(in srgb, var(--tt-text-primary) 78%, var(--tt-bg-primary));
+  --tt-button-primary-active: color-mix(in srgb, var(--tt-text-primary) 92%, var(--tt-bg-primary));
+
+  --tt-success: #059669;
+  --tt-success-light: #ecfdf5;
+  --tt-warning: #d97706;
+  --tt-warning-light: #fffbeb;
+  --tt-danger: #dc2626;
+  --tt-danger-light: #fef2f2;
+  --tt-info: #3b82f6;
+  --tt-info-light: #eff6ff;
+  --tt-goal: #8b5cf6;
+  --tt-goal-light: #f5f3ff;
+
+  --tt-danger-hover: #b91c1c;
+  --tt-danger-active: #991b1b;
+  --tt-danger-ring: rgba(220, 38, 38, 0.1);
+
+  // --- Overlay & ring colors ---
+  --tt-overlay-xs: rgba(0, 0, 0, 0.05);
+  --tt-overlay-sm: rgba(0, 0, 0, 0.08);
+  --tt-overlay-md: rgba(0, 0, 0, 0.1);
+  --tt-accent-ring: rgba(var(--tt-accent-rgb), 0.2);
+  --tt-success-subtle: rgba(34, 197, 94, 0.05);
+  --tt-danger-subtle: rgba(239, 68, 68, 0.05);
+  --tt-warning-subtle: rgba(245, 158, 11, 0.05);
+
+  // --- Transaction type tint backgrounds ---
+  --tt-bg-expense: rgba(220, 38, 38, 0.04);
+  --tt-bg-income: rgba(5, 150, 105, 0.04);
+  --tt-bg-transfer: rgba(59, 130, 246, 0.04);
+  --tt-bg-debt: rgba(217, 119, 6, 0.04);
+
+  --tt-border: #e5e5e5;
+  --tt-border-subtle: #f0f0f0;
+  --tt-border-focus: var(--tt-accent);
+
+  // Fixed colors for always-dark surfaces (auth brand panel).
+  // NOT redefined in [data-theme='dark'] — intentionally theme-independent.
+  --tt-text-on-dark: rgba(255, 255, 255, 0.8);
+  --tt-text-on-dark-strong: rgba(255, 255, 255, 0.95);
+
+  --tt-bg-brand: #1a1a1a;
+  --tt-backdrop: rgba(0, 0, 0, 0.5);
+
+  // Noise overlay intensity
+  --tt-noise-opacity: 0.025;
+
+  // Ambient gradient tint intensity (wallet cards, etc).
+  --tt-ambient-opacity: 0.04;
+
+  // --- Category color palette ---
+  --tt-cat-slate: #64748b;
+  --tt-cat-zinc: #71717a;
+  --tt-cat-stone: #78716c;
+  --tt-cat-red: #dc2626;
+  --tt-cat-orange: #ea580c;
+  --tt-cat-amber: #d97706;
+  --tt-cat-yellow: #ca8a04;
+  --tt-cat-lime: #4d7c0f;
+  --tt-cat-green: #16a34a;
+  --tt-cat-teal: #0d9488;
+  --tt-cat-cyan: #0891b2;
+  --tt-cat-sky: #0284c7;
+  --tt-cat-blue: #2563eb;
+  --tt-cat-indigo: #4f46e5;
+  --tt-cat-violet: #7c3aed;
+  --tt-cat-purple: #9333ea;
+  --tt-cat-pink: #db2777;
+  --tt-cat-rose: #e11d48;
+
+  --tt-cat-slate-rgb: 100, 116, 139;
+  --tt-cat-zinc-rgb: 113, 113, 122;
+  --tt-cat-stone-rgb: 120, 113, 108;
+  --tt-cat-red-rgb: 220, 38, 38;
+  --tt-cat-orange-rgb: 234, 88, 12;
+  --tt-cat-amber-rgb: 217, 119, 6;
+  --tt-cat-yellow-rgb: 202, 138, 4;
+  --tt-cat-lime-rgb: 77, 124, 15;
+  --tt-cat-green-rgb: 22, 163, 74;
+  --tt-cat-teal-rgb: 13, 148, 136;
+  --tt-cat-cyan-rgb: 8, 145, 178;
+  --tt-cat-sky-rgb: 2, 132, 199;
+  --tt-cat-blue-rgb: 37, 99, 235;
+  --tt-cat-indigo-rgb: 79, 70, 229;
+  --tt-cat-violet-rgb: 124, 58, 237;
+  --tt-cat-purple-rgb: 147, 51, 234;
+  --tt-cat-pink-rgb: 219, 39, 119;
+  --tt-cat-rose-rgb: 225, 29, 72;
+
+  // --- RGB companions for delta-chip / hero tinted backgrounds ---
+  --tt-success-rgb: 5, 150, 105;
+  --tt-danger-rgb: 220, 38, 38;
+  --tt-warning-rgb: 217, 119, 6;
+
+  // --- Glow RGB variants for budget bars ---
+  --tt-glow-success-rgb: 5, 150, 105;
+  --tt-glow-warning-rgb: 217, 119, 6;
+  --tt-glow-danger-rgb: 220, 38, 38;
+
+  // --- RGB variants (для rgba() в gradients и backdrop) ---
+  --tt-bg-secondary-rgb: 255, 255, 255;
+}
+
+[data-theme='dark'] {
+  --tt-bg-primary: #131518;
+  --tt-bg-secondary: #191b1e;
+  --tt-bg-tertiary: #24262a;
+  --tt-bg-hover: #24262a;
+  --tt-bg-active: #3d3f44;
+  --tt-bg-sidebar: #0c0d0f;
+
+  --tt-text-primary: #f5f5f5;
+  --tt-text-secondary: #a3a3a3;
+  --tt-text-tertiary: #737373;
+  --tt-text-inverse: #111111;
+
+  --tt-accent-mint: #5eead4;
+  --tt-accent-mint-rgb: 94, 234, 212;
+  --tt-accent-blue: #60a5fa;
+  --tt-accent-blue-rgb: 96, 165, 250;
+  --tt-accent-amber: #fbbf24;
+  --tt-accent-amber-rgb: 251, 191, 36;
+
+  --tt-accent-hover: color-mix(in srgb, var(--tt-accent) 86%, var(--tt-text-primary));
+  --tt-accent-active: color-mix(in srgb, var(--tt-accent) 72%, var(--tt-text-primary));
+  --tt-accent-light: rgba(var(--tt-accent-rgb), 0.12);
+  --tt-accent-subtle: rgba(var(--tt-accent-rgb), 0.12);
+  --tt-glow-accent: 0 0 16px rgba(var(--tt-accent-rgb), 0.2);
+
+  --tt-button-primary-bg: color-mix(in srgb, var(--tt-text-primary) 86%, var(--tt-bg-primary));
+  --tt-button-primary-fg: var(--tt-bg-primary);
+  --tt-button-primary-hover: color-mix(in srgb, var(--tt-text-primary) 94%, var(--tt-bg-primary));
+  --tt-button-primary-active: color-mix(in srgb, var(--tt-text-primary) 78%, var(--tt-bg-primary));
+
+  --tt-success: #34d399;
+  --tt-success-light: rgba(52, 211, 153, 0.1);
+  --tt-warning: #fbbf24;
+  --tt-warning-light: rgba(251, 191, 36, 0.1);
+  --tt-danger: #f87171;
+  --tt-danger-hover: #ef4444;
+  --tt-danger-active: #dc2626;
+  --tt-danger-light: rgba(248, 113, 113, 0.1);
+  --tt-danger-ring: rgba(248, 113, 113, 0.15);
+  --tt-info: #60a5fa;
+  --tt-info-light: rgba(59, 130, 246, 0.1);
+  --tt-goal: #a78bfa;
+  --tt-goal-light: rgba(167, 139, 250, 0.1);
+
+  // --- Transaction type tint backgrounds (dark) ---
+  --tt-bg-expense: rgba(248, 113, 113, 0.06);
+  --tt-bg-income: rgba(52, 211, 153, 0.06);
+  --tt-bg-transfer: rgba(96, 165, 250, 0.06);
+  --tt-bg-debt: rgba(251, 191, 36, 0.06);
+
+  --tt-border: #24262a;
+  --tt-border-subtle: #1d1f22;
+
+  --tt-backdrop: rgba(0, 0, 0, 0.7);
+
+  --tt-noise-opacity: 0.03;
+  --tt-ambient-opacity: 0.08;
+
+  // --- Category color palette (dark — brighter for contrast) ---
+  --tt-cat-slate: #94a3b8;
+  --tt-cat-zinc: #a1a1aa;
+  --tt-cat-stone: #a8a29e;
+  --tt-cat-red: #f87171;
+  --tt-cat-orange: #fb923c;
+  --tt-cat-amber: #fbbf24;
+  --tt-cat-yellow: #facc15;
+  --tt-cat-lime: #a3e635;
+  --tt-cat-green: #4ade80;
+  --tt-cat-teal: #2dd4bf;
+  --tt-cat-cyan: #22d3ee;
+  --tt-cat-sky: #38bdf8;
+  --tt-cat-blue: #60a5fa;
+  --tt-cat-indigo: #818cf8;
+  --tt-cat-violet: #a78bfa;
+  --tt-cat-purple: #c084fc;
+  --tt-cat-pink: #f472b6;
+  --tt-cat-rose: #fb7185;
+
+  --tt-cat-slate-rgb: 148, 163, 184;
+  --tt-cat-zinc-rgb: 161, 161, 170;
+  --tt-cat-stone-rgb: 168, 162, 158;
+  --tt-cat-red-rgb: 248, 113, 113;
+  --tt-cat-orange-rgb: 251, 146, 60;
+  --tt-cat-amber-rgb: 251, 191, 36;
+  --tt-cat-yellow-rgb: 250, 204, 21;
+  --tt-cat-lime-rgb: 163, 230, 53;
+  --tt-cat-green-rgb: 74, 222, 128;
+  --tt-cat-teal-rgb: 45, 212, 191;
+  --tt-cat-cyan-rgb: 34, 211, 238;
+  --tt-cat-sky-rgb: 56, 189, 248;
+  --tt-cat-blue-rgb: 96, 165, 250;
+  --tt-cat-indigo-rgb: 129, 140, 248;
+  --tt-cat-violet-rgb: 167, 139, 250;
+  --tt-cat-purple-rgb: 192, 132, 252;
+  --tt-cat-pink-rgb: 244, 114, 182;
+  --tt-cat-rose-rgb: 251, 113, 133;
+
+  --tt-glow-success-rgb: 52, 211, 153;
+  --tt-glow-warning-rgb: 251, 191, 36;
+  --tt-glow-danger-rgb: 248, 113, 113;
+
+  // --- RGB companions (dark overrides) ---
+  --tt-success-rgb: 52, 211, 153;
+  --tt-danger-rgb: 248, 113, 113;
+  --tt-warning-rgb: 251, 191, 36;
+
+  // --- RGB variants (dark theme overrides) ---
+  --tt-bg-secondary-rgb: 25, 27, 30;
+}
+
+[data-accent='mint'] {
+  --tt-accent: var(--tt-accent-mint);
+  --tt-accent-rgb: var(--tt-accent-mint-rgb);
+}
+
+[data-accent='blue'] {
+  --tt-accent: var(--tt-accent-blue);
+  --tt-accent-rgb: var(--tt-accent-blue-rgb);
+}
+
+[data-accent='amber'] {
+  --tt-accent: var(--tt-accent-amber);
+  --tt-accent-rgb: var(--tt-accent-amber-rgb);
+}

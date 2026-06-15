@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  border: none;
+  background: var(--tt-border-subtle);
+
+  &:not(.vertical) {
+    width: 100%;
+    height: 1px;
+  }
+
+  &.vertical {
+    width: 1px;
+    align-self: stretch;
+  }
+}
+
+:host(.blueprint) {
+  background: transparent;
+
+  &:not(.vertical) {
+    border-top: 1px dashed var(--tt-bp-border-subtle);
+  }
+
+  &.vertical {
+    border-left: 1px dashed var(--tt-bp-border-subtle);
+  }
+}
+
+:host(.labelled) {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-3);
+  block-size: auto;
+  background: transparent;
+  border: 0;
+  color: var(--tt-text-tertiary);
+  font-family: var(--tt-font-family);
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-medium);
+  text-transform: uppercase;
+}
+
+:host(.labelled)::before,
+:host(.labelled)::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--tt-border-subtle);
+}
+
+:host(.labelled.blueprint) {
+  color: var(--tt-bp);
+}
+
+:host(.labelled.blueprint)::before,
+:host(.labelled.blueprint)::after {
+  border-top: 1px dashed var(--tt-bp-border-subtle);
+}

@@ -1,0 +1,22 @@
+@mixin text($size: base, $weight: normal) {
+  font-size: var(--tt-text-#{$size});
+  font-weight: var(--tt-font-#{$weight});
+  line-height: var(--tt-leading-normal);
+}
+
+@mixin heading($size: xl) {
+  font-size: var(--tt-text-#{$size});
+  font-weight: var(--tt-font-semibold);
+  line-height: var(--tt-leading-tight);
+  color: var(--tt-text-primary);
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

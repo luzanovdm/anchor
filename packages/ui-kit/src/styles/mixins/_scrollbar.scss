@@ -1,0 +1,48 @@
+@mixin custom-scrollbar {
+  scrollbar-gutter: stable;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--tt-border);
+    border-radius: var(--tt-radius-full);
+
+    &:hover {
+      background: var(--tt-text-tertiary);
+    }
+  }
+}
+
+// Edge fade for scroll containers. Keep this as a plain mask instead of
+// CSS scroll-state queries: Chromium currently accepts `container-type:
+// scroll-state` but does not reliably resolve the scroll-state container
+// rules, which leaves consumers with hard clipped edges.
+@mixin scroll-fade($size: 16px) {
+  --tt-scroll-fade-size: #{$size};
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--tt-scroll-fade-size),
+    #000 calc(100% - var(--tt-scroll-fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--tt-scroll-fade-size),
+    #000 calc(100% - var(--tt-scroll-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}

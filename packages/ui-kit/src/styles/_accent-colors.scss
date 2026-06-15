@@ -1,0 +1,63 @@
+:root {
+  --c-rose: #f43f5e;
+  --c-orange: #f97316;
+  --c-amber: #f59e0b;
+  --c-emerald: #10b981;
+  --c-teal: #14b8a6;
+  --c-sky: #0ea5e9;
+  --c-indigo: #6366f1;
+  --c-violet: #8b5cf6;
+  --c-pink: #ec4899;
+  --c-slate: #64748b;
+  --c-clay: oklch(0.76 0.055 25);
+  --c-apricot: oklch(0.84 0.060 55);
+  --c-olive: oklch(0.80 0.050 115);
+  --c-moss: oklch(0.74 0.055 145);
+  --c-jade: oklch(0.78 0.045 175);
+  --c-mist: oklch(0.82 0.045 215);
+  --c-denim: oklch(0.70 0.055 250);
+  --c-lavender: oklch(0.80 0.060 305);
+  --c-mauve: oklch(0.76 0.055 340);
+  --c-taupe: oklch(0.74 0.020 70);
+}
+
+.accent-rose { --c: var(--c-rose); }
+.accent-orange { --c: var(--c-orange); }
+.accent-amber { --c: var(--c-amber); }
+.accent-emerald { --c: var(--c-emerald); }
+.accent-teal { --c: var(--c-teal); }
+.accent-sky { --c: var(--c-sky); }
+.accent-indigo { --c: var(--c-indigo); }
+.accent-violet { --c: var(--c-violet); }
+.accent-pink { --c: var(--c-pink); }
+.accent-slate { --c: var(--c-slate); }
+.accent-clay { --c: var(--c-clay); }
+.accent-apricot { --c: var(--c-apricot); }
+.accent-olive { --c: var(--c-olive); }
+.accent-moss { --c: var(--c-moss); }
+.accent-jade { --c: var(--c-jade); }
+.accent-mist { --c: var(--c-mist); }
+.accent-denim { --c: var(--c-denim); }
+.accent-lavender { --c: var(--c-lavender); }
+.accent-mauve { --c: var(--c-mauve); }
+.accent-taupe { --c: var(--c-taupe); }
+
+.accent-grad-bg {
+  background: linear-gradient(
+    135deg,
+    var(--c),
+    color-mix(in oklab, var(--c) 70%, white 30%)
+  );
+}
+
+.accent-tinted-bg {
+  background: color-mix(in oklab, var(--c) 14%, var(--tt-bg-secondary));
+}
+
+.accent-icon {
+  color: var(--c);
+}
+
+.accent-border {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c) 28%, transparent);
+}
