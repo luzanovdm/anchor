@@ -1,0 +1,236 @@
+:host {
+  --tt-spinner-scale: 0.7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  color: var(--tt-text-tertiary);
+}
+
+.dance {
+  display: block;
+  position: relative;
+  width: calc(56px * var(--tt-spinner-scale));
+  height: calc(36px * var(--tt-spinner-scale));
+  flex: 0 0 auto;
+}
+
+.dance-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 36px;
+  transform: scale(var(--tt-spinner-scale));
+  transform-origin: top left;
+}
+
+.dance-stage i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--tt-radius-xs);
+  background: color-mix(in oklab, currentColor 72%, var(--tt-bg-primary));
+  animation-duration: 3.6s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.dance-stage i:nth-child(1) {
+  animation-name: spinner-dance-c1, spinner-dance-tone;
+}
+
+.dance-stage i:nth-child(2) {
+  animation-name: spinner-dance-c2, spinner-dance-tone;
+}
+
+.dance-stage i:nth-child(3) {
+  animation-name: spinner-dance-c3, spinner-dance-tone;
+}
+
+.dance-stage i:nth-child(4) {
+  animation-name: spinner-dance-c4, spinner-dance-tone;
+}
+
+:host(.tt-spinner-sm) {
+  --tt-spinner-scale: 0.5;
+
+  min-height: 28px;
+}
+
+:host(.tt-spinner-md) {
+  --tt-spinner-scale: 0.7;
+}
+
+:host(.tt-spinner-lg) {
+  --tt-spinner-scale: 1;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@keyframes spinner-dance-c1 {
+  0%,
+  4% {
+    left: 10px;
+    top: 0;
+  }
+
+  22%,
+  28%,
+  47%,
+  53%,
+  72%,
+  78% {
+    left: 20px;
+    top: 0;
+  }
+
+  100% {
+    left: 10px;
+    top: 0;
+  }
+}
+
+@keyframes spinner-dance-c2 {
+  0%,
+  4% {
+    left: 30px;
+    top: 0;
+  }
+
+  22%,
+  28%,
+  47%,
+  53% {
+    left: 20px;
+    top: 20px;
+  }
+
+  72%,
+  78% {
+    left: 0;
+    top: 20px;
+  }
+
+  100% {
+    left: 10px;
+    top: 20px;
+  }
+}
+
+@keyframes spinner-dance-c3 {
+  0%,
+  4% {
+    left: 10px;
+    top: 20px;
+  }
+
+  22%,
+  28%,
+  47%,
+  53% {
+    left: 0;
+    top: 20px;
+  }
+
+  72%,
+  78% {
+    left: 0;
+    top: 0;
+  }
+
+  100% {
+    left: 30px;
+    top: 0;
+  }
+}
+
+@keyframes spinner-dance-c4 {
+  0%,
+  4% {
+    left: 30px;
+    top: 20px;
+  }
+
+  22%,
+  28% {
+    left: 40px;
+    top: 20px;
+  }
+
+  47%,
+  53%,
+  72%,
+  78% {
+    left: 40px;
+    top: 0;
+  }
+
+  100% {
+    left: 30px;
+    top: 20px;
+  }
+}
+
+@keyframes spinner-dance-tone {
+  0%,
+  4%,
+  100% {
+    opacity: 0.42;
+  }
+
+  22%,
+  28% {
+    opacity: 0.58;
+  }
+
+  47%,
+  53% {
+    opacity: 0.5;
+  }
+
+  72%,
+  78% {
+    opacity: 0.66;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dance-stage i {
+    animation: none;
+  }
+
+  .dance-stage i:nth-child(1) {
+    left: 10px;
+    top: 0;
+    opacity: 0.42;
+  }
+
+  .dance-stage i:nth-child(2) {
+    left: 30px;
+    top: 0;
+    opacity: 0.58;
+  }
+
+  .dance-stage i:nth-child(3) {
+    left: 10px;
+    top: 20px;
+    opacity: 0.5;
+  }
+
+  .dance-stage i:nth-child(4) {
+    left: 30px;
+    top: 20px;
+    opacity: 0.66;
+  }
+}

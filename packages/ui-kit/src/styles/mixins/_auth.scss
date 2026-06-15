@@ -1,0 +1,317 @@
+@use 'layout' as layout;
+@use 'surfaces' as surfaces;
+@use 'typography' as typography;
+
+// Split-screen auth layout: dark brand panel (left) + light form panel (right)
+
+@mixin auth-page {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+
+  @include layout.breakpoint(md) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@mixin auth-brand {
+  background: var(--tt-bg-brand);
+  color: var(--tt-text-inverse);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--tt-space-8);
+
+  @include layout.breakpoint(md) {
+    padding: var(--tt-space-16);
+  }
+}
+
+@mixin auth-form-area {
+  background: var(--tt-bg-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--tt-space-6);
+
+  @include layout.breakpoint(md) {
+    padding: var(--tt-space-16);
+  }
+}
+
+@mixin auth-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+
+  // `min-width: 0` — without it, flex items use `min-content` on the cross
+  // axis (here horizontal, since the parent flex-column flows vertically).
+  // Any unbreakable line of content (a long heading or description) would
+  // then push the card past `max-width`, which is why the login / forgot /
+  // register forms previously rendered at three different widths.
+  min-width: 0;
+  max-width: var(--tt-auth-form-width, 360px);
+  margin-inline: auto;
+}
+
+// Auth flow `:host` cap. Angular's emulated view encapsulation gives
+// each routed component a unique ngcontent attribute, so a parent
+// `.shell-form-stage > *` rule cannot reach those hosts — the cap has
+// to be declared INSIDE each flow's scoped stylesheet. Include this at
+// the top of every auth component (login / register / forgot / reset /
+// alpha-gate / status) so the host element itself is width-bounded and
+// every flow renders at the same column.
+@mixin auth-host {
+  :host {
+    display: block;
+    width: 100%;
+    max-width: var(--tt-auth-form-width, 360px);
+    margin-inline: auto;
+  }
+}
+
+@mixin auth-title {
+  @include typography.heading(3xl);
+  color: var(--tt-accent);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+@mixin auth-subtitle {
+  text-align: center;
+  color: var(--tt-text-secondary);
+  font-size: var(--tt-text-sm);
+  margin-top: calc(-1 * var(--tt-space-4));
+}
+
+@mixin auth-form {
+  @include layout.flex-column(3);
+}
+
+@mixin auth-error {
+  color: var(--tt-danger);
+  font-size: var(--tt-text-sm);
+  text-align: center;
+}
+
+@mixin auth-version {
+  text-align: center;
+  font-size: var(--tt-text-xs);
+  color: var(--tt-text-tertiary);
+  opacity: 0.6;
+  margin-top: var(--tt-space-6);
+}
+
+@mixin auth-alt-action {
+  display: flex;
+  justify-content: center;
+  gap: var(--tt-space-1);
+  margin-top: var(--tt-space-5);
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-secondary);
+
+  a {
+    color: var(--tt-accent);
+    text-decoration: none;
+    font-weight: var(--tt-font-medium);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@mixin auth-separator {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-3);
+  color: var(--tt-text-tertiary);
+  font-size: var(--tt-text-xs);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--tt-border);
+  }
+}
+
+// Floating label input field (email, password, name, etc.)
+@mixin auth-float-field {
+  .float-field {
+    --tt-auth-float-input-height: 48px;
+
+    position: relative;
+  }
+
+  .float-input {
+    width: 100%;
+    min-height: var(--tt-auth-float-input-height);
+    padding: 18px 14px 6px;
+    border: 1px solid var(--tt-border);
+    border-radius: var(--tt-radius-md);
+    @include layout.squircle;
+    font-size: var(--tt-text-sm);
+    font-family: inherit;
+    background: transparent;
+    color: var(--tt-text-primary);
+    outline: none;
+    transition:
+      border-color var(--tt-transition-fast),
+      box-shadow var(--tt-transition-fast);
+
+    &:focus {
+      border-color: var(--tt-accent);
+      box-shadow: var(--tt-shadow-ring);
+    }
+
+    &::placeholder {
+      color: transparent;
+    }
+  }
+
+  .float-label {
+    position: absolute;
+    left: 14px;
+
+    // Anchor against the *input's* vertical center, not the float-field's
+    // 50%. When a `.field-error` lights up below, the field grows taller —
+    // `top: 50%` would drift the label downward mid-validation (looks like
+    // the placeholder "jumps"). Pinning to the input height keeps the empty
+    // and error states visually identical.
+    top: calc(var(--tt-auth-float-input-height) * 0.5);
+    transform: translateY(-50%);
+    font-size: var(--tt-text-sm);
+    color: var(--tt-text-tertiary);
+    pointer-events: none;
+    transition:
+      top var(--tt-transition-fast),
+      transform var(--tt-transition-fast),
+      font-size var(--tt-transition-fast),
+      color var(--tt-transition-fast);
+
+    .float-input:focus + &,
+    .float-input:not(:placeholder-shown) + & {
+      top: 8px;
+      transform: translateY(0);
+      font-size: var(--tt-text-2xs);
+      font-weight: var(--tt-font-semibold);
+      color: var(--tt-accent);
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .field-error {
+    display: block;
+    font-size: var(--tt-text-xs);
+    color: var(--tt-danger);
+    margin-top: var(--tt-space-1);
+    font-weight: var(--tt-font-medium);
+  }
+
+  // Password fields wrap a `<tt-password-toggle>` sibling inside the field.
+  // Reserve space on the right so the eye button never overlaps the value.
+  .float-field.with-toggle .float-input {
+    padding-right: 44px;
+  }
+
+  .float-field.with-toggle tt-password-toggle {
+    top: calc(var(--tt-auth-float-input-height) * 0.5);
+  }
+}
+
+// Centered status layout for success/error/loading states
+@mixin auth-status-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--tt-space-3);
+
+  h2 {
+    font-size: var(--tt-text-lg);
+    font-weight: var(--tt-font-semibold);
+    color: var(--tt-text-primary);
+  }
+}
+
+@mixin auth-status-text {
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-secondary);
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+// Circular status icon (56px)
+@mixin auth-status-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--tt-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  &.success {
+    background: var(--tt-success-light);
+    color: var(--tt-success);
+  }
+
+  &.error {
+    background: var(--tt-danger-light);
+    color: var(--tt-danger);
+  }
+}
+
+// Full-width auth submit button
+@mixin auth-submit-button {
+  width: 100%;
+  border-radius: var(--tt-radius-sm);
+  @include layout.squircle;
+  margin-top: var(--tt-space-1);
+}
+
+// OAuth button group (Google, Apple)
+@mixin auth-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tt-space-2);
+  width: 100%;
+  padding: var(--tt-space-3) var(--tt-space-4);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-sm);
+  @include layout.squircle;
+  font-size: var(--tt-text-sm);
+  font-weight: var(--tt-font-medium);
+  font-family: inherit;
+  transition:
+    background-color var(--tt-transition-fast),
+    border-color var(--tt-transition-fast);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin auth-remember {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-secondary);
+
+  input[type='checkbox'] {
+    accent-color: var(--tt-accent);
+    width: 15px;
+    height: 15px;
+  }
+}

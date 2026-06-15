@@ -1,0 +1,130 @@
+// Console page layout mixins.
+// Shared across all four archetypes (Observe, Author, Configure, Operate).
+// Import via `@use 'styles/mixins' as m;` then `@include m.page-head;`.
+
+@mixin page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--tt-space-4);
+  margin-bottom: var(--tt-space-4);
+  padding-bottom: var(--tt-space-3);
+  border-bottom: 1px solid var(--tt-rule);
+  flex-wrap: wrap;
+}
+
+@mixin page-head-titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-1);
+  min-width: 0;
+}
+
+@mixin page-head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  flex-wrap: wrap;
+}
+
+@mixin eyebrow {
+  font-family: var(--tt-font-mono);
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-semibold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tt-text-tertiary);
+}
+
+@mixin h-title {
+  margin: 0;
+  font-size: var(--tt-text-xl);
+  font-weight: var(--tt-font-semibold);
+  color: var(--tt-text-primary);
+  letter-spacing: -0.01em;
+}
+
+@mixin lede-sm {
+  margin: 0;
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-tertiary);
+}
+
+// Chip row — horizontal row of toggle chips for filtering.
+@mixin chip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-1);
+  margin-bottom: var(--tt-space-4);
+  flex-wrap: wrap;
+}
+
+// Standalone chip — for use when ttChip directive isn't appropriate.
+@mixin chip {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 var(--tt-space-3);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-full);
+  background: var(--tt-bg-secondary);
+  color: var(--tt-text-secondary);
+  font-size: var(--tt-text-xs);
+  font-weight: var(--tt-font-medium);
+  cursor: pointer;
+  transition: background var(--tt-tx-fast), color var(--tt-tx-fast);
+
+  &:hover {
+    color: var(--tt-text-primary);
+    background: var(--tt-bg-hover);
+  }
+
+  &.is-active {
+    background: var(--tt-text-primary);
+    color: var(--tt-bg-secondary);
+    border-color: transparent;
+  }
+}
+
+// Chart card — flat bordered panel for chart or table content.
+@mixin chart-card {
+  padding: var(--tt-space-4) var(--tt-space-5);
+  border: 1px solid var(--tt-rule);
+  border-radius: var(--tt-radius-md);
+  background: var(--tt-bg-secondary);
+}
+
+@mixin chart-title {
+  margin: 0 0 var(--tt-space-3);
+  color: var(--tt-text-secondary);
+  font-size: var(--tt-text-xs);
+  font-weight: var(--tt-font-semibold);
+  letter-spacing: var(--tt-tracking-wide);
+  text-transform: uppercase;
+}
+
+// Section label — e.g. "Recent sends · 200"
+@mixin section-label {
+  margin: 0 0 var(--tt-space-2);
+  color: var(--tt-text-secondary);
+  font-size: var(--tt-text-xs);
+  font-weight: var(--tt-font-semibold);
+  letter-spacing: var(--tt-tracking-wide);
+  text-transform: uppercase;
+}
+
+// Search input — small inline search field for page-head or chip-row.
+@mixin search-input {
+  height: 32px;
+  padding: 0 var(--tt-space-3);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-sm);
+  background: var(--tt-bg-secondary);
+  color: var(--tt-text-primary);
+  font-size: var(--tt-text-sm);
+  outline: none;
+
+  &:focus {
+    border-color: var(--tt-accent);
+  }
+}

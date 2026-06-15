@@ -1,0 +1,22 @@
+@mixin amount-positive {
+  color: var(--tt-success);
+  font-weight: var(--tt-font-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+@mixin amount-negative {
+  color: var(--tt-danger);
+  font-weight: var(--tt-font-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+// Global utility classes for amount glow (dark mode only, none in light)
+// stylelint-disable selector-class-pattern -- Public amount utility variants keep their legacy names.
+.amount--positive {
+  text-shadow: var(--tt-glow-text-success);
+}
+
+.amount--negative {
+  text-shadow: var(--tt-glow-text-danger);
+}
+// stylelint-enable selector-class-pattern

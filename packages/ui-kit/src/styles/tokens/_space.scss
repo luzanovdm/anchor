@@ -1,0 +1,65 @@
+:root {
+  // --- Spacing (4px base) ---
+  --tt-space-0: 0;
+  --tt-space-px: 1px;
+  --tt-space-0\.5: 0.125rem; // 2px
+  --tt-space-1: 0.25rem; // 4px
+  --tt-space-1\.5: 0.375rem; // 6px
+  --tt-space-2: 0.5rem; // 8px
+  --tt-space-3: 0.75rem; // 12px
+  --tt-space-4: 1rem; // 16px
+  --tt-space-5: 1.25rem; // 20px
+  --tt-space-6: 1.5rem; // 24px
+  --tt-space-8: 2rem; // 32px
+  --tt-space-10: 2.5rem; // 40px
+  --tt-space-12: 3rem; // 48px
+  --tt-space-16: 4rem; // 64px
+  --tt-space-20: 5rem; // 80px
+  --tt-space-24: 6rem; // 96px
+
+  // --- Radius ---
+  --tt-radius-xs: 0.5rem; // 8px
+  --tt-radius-sm: 0.75rem; // 12px — inputs, buttons
+  --tt-radius-md: 1rem; // 16px — cards
+  --tt-radius-lg: 1.25rem; // 20px — modals, large cards
+  --tt-radius-xl: 1.5rem; // 24px
+  --tt-radius-full: 9999px; // pills, avatars
+
+  // --- Field tokens ---
+  --tt-field-bg: var(--tt-bg-secondary);
+  --tt-focus-ring: 0 0 0 2px var(--tt-accent);
+  --tt-focus-ring-outline: 2px solid var(--tt-accent);
+  --tt-focus-ring-border-color: var(--tt-accent);
+
+  // --- Glass field overrides (set on glass containers, cascade to children) ---
+  --tt-glass-field-bg: rgba(var(--tt-bg-secondary-rgb), 0.35);
+  --tt-glass-field-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  --tt-glass-field-shadow-focus: 0 0 0 2px var(--tt-accent);
+  --tt-glass-field-shadow-error: 0 0 0 1.5px rgba(220, 38, 38, 0.5);
+
+  // --- Ghost control tokens (embedded controls without own chrome) ---
+  --tt-field-ghost-focus-bg: var(--tt-accent-subtle);
+  --tt-field-ghost-hover-bg: var(--tt-bg-hover);
+  --tt-field-ghost-active-bg: var(--tt-bg-active);
+
+  // --- Layout ---
+  --tt-sidebar-width: 260px;
+  --tt-sidebar-collapsed: 72px;
+  --tt-topbar-height: 56px;
+  --tt-content-max-width: 1280px;
+
+  // --- Floating UI safe zones ---
+  // Reserved space claimed by always-on shell affordances.
+  // Other floating UI (toasts, popovers, side panels) must offset by these
+  // values to avoid overlapping the FAB or the notifications bell.
+
+  // Bottom-right "Add transaction" FAB — defined by the FAB itself; consumers respect it.
+  --tt-fab-size: 48px;
+  --tt-safe-fab-bottom: calc(
+    var(--tt-fab-size) + var(--tt-space-6) + var(--tt-space-3) + env(safe-area-inset-bottom, 0px)
+  );
+
+  // Top-right notifications bell — small icon trigger anchored to the viewport corner.
+  --tt-bell-size: 32px;
+  --tt-safe-bell-topright: calc(var(--tt-bell-size) + var(--tt-space-3) * 2);
+}

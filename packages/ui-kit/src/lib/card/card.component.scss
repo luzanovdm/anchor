@@ -1,0 +1,103 @@
+@use 'styles/mixins' as m;
+
+:host {
+  display: block;
+  position: relative;
+  background: var(--tt-bg-secondary);
+  border-radius: var(--tt-radius-md);
+  transition: filter var(--tt-transition-base);
+  @include m.squircle;
+}
+
+// --- Padding ---
+
+:host { padding: var(--tt-space-6); }          // default fallback (md)
+:host(.tt-card--pad-none) { padding: 0; }
+:host(.tt-card--pad-sm) { padding: var(--tt-space-4); }
+:host(.tt-card--pad-md) { padding: var(--tt-space-6); }
+:host(.tt-card--pad-lg) { padding: var(--tt-space-8); }
+
+// --- Variants ---
+
+:host(.tt-card--elevated) {
+  // outline-offset: -1px gives inset border effect.
+  filter: drop-shadow(0 1px 3px var(--tt-overlay-sm)) drop-shadow(0 1px 2px var(--tt-overlay-xs));
+  outline: 1px solid var(--tt-border-subtle);
+  outline-offset: -1px;
+}
+
+:host(.tt-card--outlined) {
+  filter: none;
+  outline: 1px solid var(--tt-border);
+  outline-offset: -1px;
+}
+
+:host(.tt-card--flat) {
+  filter: none;
+  background: var(--tt-bg-tertiary);
+}
+
+:host(.tt-card--blueprint) {
+  filter: none;
+  background: var(--tt-bp-subtle);
+  outline: var(--tt-bp-stroke) dashed var(--tt-bp);
+  outline-offset: -1px;
+  box-shadow: var(--tt-bp-glow);
+}
+
+:host(.tt-card--bp-corners)::before,
+:host(.tt-card--bp-corners)::after,
+.tt-card__bp-corner {
+  content: '';
+  position: absolute;
+  inline-size: var(--tt-space-4);
+  block-size: var(--tt-space-4);
+  border: 1px solid var(--tt-bp);
+  pointer-events: none;
+}
+
+:host(.tt-card--bp-corners)::before {
+  inset-block-start: var(--tt-space-2);
+  inset-inline-start: var(--tt-space-2);
+  border-inline-end: 0;
+  border-block-end: 0;
+}
+
+:host(.tt-card--bp-corners)::after {
+  inset-block-start: var(--tt-space-2);
+  inset-inline-end: var(--tt-space-2);
+  border-inline-start: 0;
+  border-block-end: 0;
+}
+
+.tt-card__bp-corner--bl {
+  inset-block-end: var(--tt-space-2);
+  inset-inline-start: var(--tt-space-2);
+  border-inline-end: 0;
+  border-block-start: 0;
+}
+
+.tt-card__bp-corner--br {
+  inset-block-end: var(--tt-space-2);
+  inset-inline-end: var(--tt-space-2);
+  border-inline-start: 0;
+  border-block-start: 0;
+}
+
+// --- Interactive ---
+
+:host(.tt-card--interactive) {
+  &:hover {
+    filter: drop-shadow(0 4px 6px var(--tt-overlay-sm)) drop-shadow(0 2px 4px var(--tt-overlay-xs));
+  }
+
+  &:active {
+    filter: drop-shadow(0 1px 2px var(--tt-overlay-xs));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tt-accent);
+    outline-offset: 2px;
+    filter: none;
+  }
+}

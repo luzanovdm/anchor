@@ -1,0 +1,53 @@
+// Chart motion primitives — shared transitions for chart paths, markers,
+// grids, and viewport pans.
+// Smooth-path TS primitives live in @core/chart/morph:
+//   - sampleSmoothPath / buildSmoothLinePath / buildSmoothAreaPath emit
+//     every `d` with identical command structure, which is the invariant
+//     that makes `transition: d` actually interpolate.
+//   - createMorphOpacity returns a Signal<number> that briefly dips when
+//     the source signal changes — pair it with chart-morph-marker on
+//     translating SVG elements.
+// Viewport-slide TS tooling lives in @ui-kit/chart-viewport-slide:
+//   - ttChartViewportSlide animates SVG groups via translateX when the
+//     visible x-domain pans, so paths slide as a layer instead of morphing.
+// Usage:
+//   @use 'styles/mixins' as m;
+//   .series-path { @include m.chart-morph-path; }
+//   .marker      { @include m.chart-morph-marker; }
+//   .grid-line   { @include m.chart-morph-grid-line; }
+//   .grid-label  { @include m.chart-morph-grid-label; }
+//   @include m.chart-morph-reduced-motion {
+//     .series-path, .marker, .grid-line, .grid-label { transition: none; }
+//   }
+
+@mixin chart-morph-path {
+  transition: d var(--tt-chart-morph-duration) var(--tt-chart-morph-ease);
+}
+
+@mixin chart-morph-marker {
+  pointer-events: none;
+  transition:
+    transform var(--tt-chart-morph-duration) var(--tt-chart-morph-ease),
+    opacity var(--tt-chart-morph-opacity-duration) ease;
+}
+
+@mixin chart-morph-grid-line {
+  transition:
+    y1 var(--tt-chart-morph-duration) var(--tt-chart-morph-ease),
+    y2 var(--tt-chart-morph-duration) var(--tt-chart-morph-ease);
+}
+
+@mixin chart-morph-grid-label {
+  transition:
+    y var(--tt-chart-morph-duration) var(--tt-chart-morph-ease),
+    transform var(--tt-chart-morph-duration) var(--tt-chart-morph-ease),
+    opacity var(--tt-chart-morph-opacity-duration) ease;
+}
+
+// Wrap `prefers-reduced-motion: reduce` so chart users disable morphs
+// without remembering the exact media query each time.
+@mixin chart-morph-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}

@@ -1,0 +1,29 @@
+:root {
+  --tt-bp: #0ea5e9;
+  --tt-bp-rgb: 14, 165, 233;
+  --tt-bp-subtle: rgba(14, 165, 233, 0.06);
+  --tt-bp-soft: rgba(14, 165, 233, 0.10);
+  --tt-bp-border-subtle: rgba(14, 165, 233, 0.32);
+  --tt-bp-border: rgba(14, 165, 233, 0.45);
+  --tt-bp-border-muted: rgba(14, 165, 233, 0.38);
+  --tt-bp-border-strong: rgba(14, 165, 233, 0.55);
+  --tt-bp-skeleton-edge: rgba(14, 165, 233, 0.08);
+  --tt-bp-skeleton-mid: rgba(14, 165, 233, 0.28);
+  --tt-bp-stroke: 1.4px;
+  --tt-bp-dash: 3 3;
+  --tt-bp-glow: none;
+}
+
+[data-theme='dark'] {
+  --tt-bp: #38bdf8;
+  --tt-bp-rgb: 56, 189, 248;
+  --tt-bp-subtle: rgba(56, 189, 248, 0.08);
+  --tt-bp-soft: rgba(56, 189, 248, 0.12);
+  --tt-bp-border-subtle: rgba(56, 189, 248, 0.32);
+  --tt-bp-border: rgba(56, 189, 248, 0.45);
+  --tt-bp-border-muted: rgba(56, 189, 248, 0.38);
+  --tt-bp-border-strong: rgba(56, 189, 248, 0.55);
+  --tt-bp-skeleton-edge: rgba(56, 189, 248, 0.08);
+  --tt-bp-skeleton-mid: rgba(56, 189, 248, 0.28);
+  --tt-bp-glow: 0 0 12px rgba(56, 189, 248, 0.22);
+}

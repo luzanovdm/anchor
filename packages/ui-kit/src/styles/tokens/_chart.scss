@@ -1,0 +1,85 @@
+:root {
+  // --- Chart motion (path morphs, viewport slides, marker/grid transitions) ---
+  --tt-chart-morph-duration: 600ms;
+  --tt-chart-morph-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --tt-chart-morph-opacity-duration: 250ms;
+  --tt-chart-viewport-slide-duration: var(--tt-chart-morph-duration);
+  --tt-chart-viewport-slide-ease: var(--tt-chart-morph-ease);
+
+  // ============================================
+  // Charts & data-viz (light) — see design-system.md §13
+  // ============================================
+  // Series palette — qualitative, ≥3:1 against bg-primary, sorted by domain
+  --tt-chart-series-1: var(--tt-accent); // primary / selected accent
+  --tt-chart-series-1-rgb: var(--tt-accent-rgb);
+  --tt-chart-series-2: #0d9488; // savings
+  --tt-chart-series-2-rgb: 13, 148, 136;
+  --tt-chart-series-3: #059669; // income / positive
+  --tt-chart-series-3-rgb: 5, 150, 105;
+  --tt-chart-series-4: #d97706; // commitments / warning
+  --tt-chart-series-4-rgb: 217, 119, 6;
+  --tt-chart-series-5: #8b5cf6; // investment
+  --tt-chart-series-5-rgb: 139, 92, 246;
+  --tt-chart-series-6: #e11d48; // rose
+  --tt-chart-series-6-rgb: 225, 29, 72;
+  --tt-chart-series-7: #0891b2; // cyan
+  --tt-chart-series-7-rgb: 8, 145, 178;
+  --tt-chart-series-8: #65a30d; // lime
+  --tt-chart-series-8-rgb: 101, 163, 13;
+  --tt-chart-series-9: #c026d3; // fuchsia
+  --tt-chart-series-9-rgb: 192, 38, 211;
+  --tt-chart-series-10: #64748b; // slate / "other"
+  --tt-chart-series-10-rgb: 100, 116, 139;
+
+  // Forecast layer semantics. Keep component CSS declarative: charts ask for
+  // "plan" vs "trend" instead of choosing a palette slot locally.
+  --tt-chart-forecast-fact: var(--tt-chart-series-1);
+  --tt-chart-forecast-plan: var(--tt-chart-series-1);
+  --tt-chart-forecast-trend: var(--tt-chart-series-4);
+  --tt-chart-forecast-plan-dash: 6 5;
+  --tt-chart-forecast-trend-dash: 1 7;
+
+  // Chart chrome
+  --tt-chart-axis: var(--tt-border);
+  --tt-chart-grid: var(--tt-border-subtle);
+  --tt-chart-grid-strong: var(--tt-border);
+  --tt-chart-tick: var(--tt-text-tertiary);
+  --tt-chart-label: var(--tt-text-secondary);
+  --tt-chart-tooltip-bg: var(--tt-bg-secondary);
+  --tt-chart-tooltip-border: var(--tt-border);
+  --tt-chart-tooltip-shadow: var(--tt-shadow-md);
+  --tt-chart-empty-fg: var(--tt-text-tertiary);
+}
+
+[data-theme='dark'] {
+  // ============================================
+  // Charts & data-viz (dark) — see design-system.md §13
+  // ============================================
+  --tt-chart-series-1: var(--tt-accent);
+  --tt-chart-series-1-rgb: var(--tt-accent-rgb);
+  --tt-chart-series-2: #14b8a6;
+  --tt-chart-series-2-rgb: 20, 184, 166;
+  --tt-chart-series-3: #34d399;
+  --tt-chart-series-3-rgb: 52, 211, 153;
+  --tt-chart-series-4: #fbbf24;
+  --tt-chart-series-4-rgb: 251, 191, 36;
+  --tt-chart-series-5: #a78bfa;
+  --tt-chart-series-5-rgb: 167, 139, 250;
+  --tt-chart-series-6: #fb7185;
+  --tt-chart-series-6-rgb: 251, 113, 133;
+  --tt-chart-series-7: #22d3ee;
+  --tt-chart-series-7-rgb: 34, 211, 238;
+  --tt-chart-series-8: #a3e635;
+  --tt-chart-series-8-rgb: 163, 230, 53;
+  --tt-chart-series-9: #e879f9;
+  --tt-chart-series-9-rgb: 232, 121, 249;
+  --tt-chart-series-10: #94a3b8;
+  --tt-chart-series-10-rgb: 148, 163, 184;
+
+  // Chrome (alias references resolve from dark theme automatically)
+  // --tt-chart-axis, --tt-chart-grid, --tt-chart-tick, etc. inherit through var() chains
+}
+
+[data-accent='amber'] {
+  --tt-chart-forecast-trend: var(--tt-chart-series-7);
+}

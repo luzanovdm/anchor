@@ -1,0 +1,42 @@
+// Anchor reuses Tetri's design tokens (the --tt-* visual language) and ui-kit
+// mixins verbatim. `styles/tokens` and `styles/mixins` resolve via the
+// stylePreprocessorOptions includePath pointing at packages/ui-kit/src.
+@use 'styles/tokens';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--tt-font-family);
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-primary);
+  background: var(--tt-bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+ac-root {
+  display: block;
+  height: 100vh;
+}
+
+::selection {
+  background: var(--tt-accent-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

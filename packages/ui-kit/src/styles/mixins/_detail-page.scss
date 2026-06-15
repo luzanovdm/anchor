@@ -1,0 +1,126 @@
+@use 'layout' as m;
+
+// Shared patterns for inline-editable detail pages (account-detail, transaction-detail).
+
+@mixin meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tt-space-4) var(--tt-space-5);
+}
+
+@mixin meta-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--tt-space-2) var(--tt-space-3);
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  min-width: 0;
+  transition: background-color var(--tt-transition-fast);
+
+  &:hover {
+    background: var(--tt-bg-tertiary);
+  }
+}
+
+@mixin meta-label {
+  font-size: var(--tt-text-xs);
+  color: var(--tt-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tt-tracking-wide);
+  font-weight: var(--tt-font-medium);
+}
+
+@mixin meta-value {
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-primary);
+  overflow-wrap: anywhere;
+}
+
+@mixin edit-hint {
+  position: absolute;
+  top: var(--tt-space-2);
+  right: var(--tt-space-2);
+  opacity: 0;
+  flex-shrink: 0;
+  color: var(--tt-text-tertiary);
+  transition: opacity var(--tt-transition-fast);
+}
+
+@mixin badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px var(--tt-space-2);
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-medium);
+  color: var(--tt-text-tertiary);
+  background: var(--tt-bg-tertiary);
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  text-transform: uppercase;
+  letter-spacing: var(--tt-tracking-wide);
+}
+
+@mixin clickable-row {
+  display: flex;
+  padding: var(--tt-space-3) var(--tt-space-4);
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  width: 100%;
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  position: relative;
+  transition: background-color var(--tt-transition-fast);
+
+  &:hover {
+    background: var(--tt-bg-tertiary);
+  }
+}
+
+@mixin row-actions {
+  display: flex;
+  gap: var(--tt-space-1);
+  opacity: 0;
+  transition: opacity var(--tt-transition-fast);
+}
+
+@mixin action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  border: none;
+  background: none;
+  color: var(--tt-text-tertiary);
+  padding: 0;
+  transition:
+    background-color var(--tt-transition-fast),
+    color var(--tt-transition-fast);
+
+  &:hover {
+    background-color: var(--tt-bg-active);
+    color: var(--tt-text-primary);
+  }
+
+  &.danger:hover {
+    background-color: var(--tt-danger-light);
+    color: var(--tt-danger);
+  }
+
+  &:focus-visible {
+    box-shadow: var(--tt-ring);
+  }
+}

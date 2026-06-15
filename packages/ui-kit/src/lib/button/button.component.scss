@@ -1,0 +1,208 @@
+@use 'styles/mixins' as m;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tt-space-2);
+  font-family: var(--tt-font-family);
+  font-weight: var(--tt-font-medium);
+
+  border: none;
+  border-radius: var(--tt-radius-sm);
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background var(--tt-transition-fast),
+    opacity var(--tt-transition-fast);
+  @include m.squircle;
+
+  &:focus-visible {
+    outline: var(--tt-focus-ring-outline);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// --- Sizes ---
+
+:host(.tt-btn--sm) {
+  height: 32px;
+  padding: 0 var(--tt-space-3);
+  font-size: var(--tt-text-sm);
+}
+
+:host(.tt-btn--md) {
+  height: 38px;
+  padding: 0 var(--tt-space-4);
+  font-size: var(--tt-text-sm);
+}
+
+:host(.tt-btn--lg) {
+  height: 44px;
+  padding: 0 var(--tt-space-6);
+  font-size: var(--tt-text-base);
+}
+
+// --- Icon only ---
+
+:host(.tt-btn--icon-only.tt-btn--sm) {
+  width: 32px;
+  padding: 0;
+}
+:host(.tt-btn--icon-only.tt-btn--md) {
+  width: 38px;
+  padding: 0;
+}
+:host(.tt-btn--icon-only.tt-btn--lg) {
+  width: 44px;
+  padding: 0;
+}
+
+// --- Variants ---
+
+:host(.tt-btn--primary) {
+  background: var(--tt-button-primary-bg, var(--tt-text-primary));
+  color: var(--tt-button-primary-fg, var(--tt-text-inverse));
+
+  &:hover {
+    background: var(--tt-button-primary-hover, var(--tt-bg-active));
+  }
+  &:active {
+    background: var(--tt-button-primary-active, var(--tt-text-primary));
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background: var(--tt-bg-active);
+    color: var(--tt-text-tertiary);
+    opacity: 1;
+  }
+}
+
+:host(.tt-btn--secondary) {
+  background: var(--tt-bg-secondary);
+  color: var(--tt-text-primary);
+
+  // outline-offset: -1px gives inset effect equivalent to border: 1px solid inside
+  outline: 1px solid var(--tt-border);
+  outline-offset: -1px;
+
+  &:hover {
+    background: var(--tt-bg-hover);
+  }
+  &:active {
+    background: var(--tt-bg-active);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background: var(--tt-bg-tertiary);
+    color: var(--tt-text-tertiary);
+    outline-color: var(--tt-border-subtle);
+  }
+}
+
+:host(.tt-btn--ghost) {
+  background: transparent;
+  color: var(--tt-text-secondary);
+
+  &:hover {
+    background: var(--tt-bg-hover);
+    color: var(--tt-text-primary);
+  }
+  &:active {
+    background: var(--tt-bg-active);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    color: var(--tt-text-tertiary);
+  }
+}
+
+:host(.tt-btn--danger) {
+  background: var(--tt-danger);
+  color: var(--tt-text-inverse);
+
+  &:hover {
+    background: var(--tt-danger-hover);
+  }
+  &:active {
+    background: var(--tt-danger-active);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background: var(--tt-bg-active);
+    color: var(--tt-text-tertiary);
+  }
+}
+
+:host(.tt-btn--danger-ghost) {
+  background: transparent;
+  color: var(--tt-danger);
+
+  &:hover {
+    background: var(--tt-danger-light);
+    color: var(--tt-danger);
+  }
+  &:active {
+    background: var(--tt-danger-light);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    color: var(--tt-text-tertiary);
+  }
+}
+
+:host(.tt-btn--success) {
+  background: var(--tt-success);
+  color: var(--tt-text-inverse);
+
+  &:hover {
+    background: var(--tt-success-hover, var(--tt-success));
+    opacity: 0.92;
+  }
+  &:active {
+    opacity: 0.85;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background: var(--tt-bg-active);
+    color: var(--tt-text-tertiary);
+  }
+}
+
+// --- Loading ---
+
+:host(.tt-btn--loading) {
+  position: relative;
+  color: transparent;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: var(--tt-radius-full);
+    animation: spin 600ms linear infinite;
+    color: var(--tt-text-inverse);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

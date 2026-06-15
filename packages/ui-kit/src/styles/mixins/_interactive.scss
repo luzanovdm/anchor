@@ -1,0 +1,14 @@
+@mixin interactive {
+  transition:
+    background var(--tt-transition-fast),
+    color var(--tt-transition-fast),
+    border-color var(--tt-transition-fast),
+    box-shadow var(--tt-transition-fast),
+    opacity var(--tt-transition-fast);
+  user-select: none;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--tt-shadow-ring);
+  }
+}

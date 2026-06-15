@@ -1,0 +1,45 @@
+:root {
+  // --- Typography ---
+  --tt-font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tt-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  --tt-letter-spacing: 0;
+  --tt-letter-spacing-mono: 0;
+  --tt-letter-spacing-hero: 0;
+  --tt-font-mono-variant-numeric: tabular-nums;
+  --tt-font-mono-feature-settings: 'tnum';
+  --tt-font-mono-italic-style: normal;
+  --tt-font-mono-italic-variation: normal;
+
+  --tt-text-2xs: 0.625rem; // 10px
+  --tt-text-xs: 0.75rem; // 12px
+  --tt-text-sm: 0.875rem; // 14px
+  --tt-text-base: 1rem; // 16px
+  --tt-text-lg: 1.125rem; // 18px
+  --tt-text-xl: 1.25rem; // 20px
+  --tt-text-2xl: 1.5rem; // 24px
+  --tt-text-3xl: 2rem; // 32px
+  --tt-text-4xl: 2.5rem; // 40px
+
+  // Display sizes — number-first KPI heroes
+  --tt-text-5xl: 3rem; // 48px
+  --tt-text-6xl: 4rem; // 64px
+  --tt-text-7xl: 5rem; // 80px
+  --tt-text-8xl: 6.5rem; // 104px
+
+  --tt-font-light: 300;
+  --tt-font-normal: 400;
+  --tt-font-body: 400;
+  --tt-font-medium: 500;
+  --tt-font-semibold: 600;
+  --tt-font-bold: 700;
+
+  --tt-leading-tight: 1.2;
+  --tt-leading-snug: 1.375;
+  --tt-leading-normal: 1.5;
+  --tt-leading-relaxed: 1.625;
+
+  --tt-tracking-tight: -0.025em;
+  --tt-tracking-normal: 0;
+  --tt-tracking-wide: 0.025em;
+}

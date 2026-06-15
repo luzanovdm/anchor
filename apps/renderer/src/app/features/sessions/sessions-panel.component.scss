@@ -1,0 +1,120 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--tt-bg-sidebar);
+  border-right: 1px solid var(--tt-border);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  padding: var(--tt-space-4);
+  border-bottom: 1px solid var(--tt-border-subtle);
+}
+
+.title {
+  font-size: var(--tt-text-sm);
+  font-weight: var(--tt-font-semibold);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-2);
+  padding: var(--tt-space-3) var(--tt-space-4);
+  border-bottom: 1px solid var(--tt-border-subtle);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+}
+
+.agent {
+  font-size: var(--tt-text-2xs);
+  font-weight: var(--tt-font-semibold);
+  text-transform: uppercase;
+  color: var(--tt-accent);
+}
+
+.project {
+  flex: 1;
+  font-size: var(--tt-text-sm);
+  color: var(--tt-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+}
+
+.gate,
+.qcount {
+  margin-right: auto;
+  padding: 2px var(--tt-space-2);
+  border: none;
+  border-radius: var(--tt-radius-full);
+  font-size: var(--tt-text-2xs);
+  color: var(--tt-text-secondary);
+  background: var(--tt-bg-tertiary);
+  cursor: pointer;
+}
+
+.qcount {
+  margin-right: 0;
+}
+
+.queue {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-space-1);
+}
+
+.qrow {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  padding: var(--tt-space-2);
+  border-radius: var(--tt-radius-sm);
+  background: var(--tt-bg-tertiary);
+  font-size: var(--tt-text-xs);
+}
+
+.qrow.is-sent {
+  opacity: 0.55;
+}
+
+.qbody {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cancel {
+  border: none;
+  background: transparent;
+  color: var(--tt-text-tertiary);
+  cursor: pointer;
+}
+
+.cancel:hover {
+  color: var(--tt-danger);
+}

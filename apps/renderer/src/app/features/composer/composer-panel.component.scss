@@ -1,0 +1,65 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--tt-bg-primary);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-3);
+  padding: var(--tt-space-4);
+  border-bottom: 1px solid var(--tt-border-subtle);
+}
+
+.title {
+  flex: 1;
+  font-size: var(--tt-text-sm);
+  font-weight: var(--tt-font-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.save {
+  font-size: var(--tt-text-xs);
+  color: var(--tt-text-tertiary);
+  transition: color var(--tt-transition-fast);
+}
+
+.save.is-busy {
+  color: var(--tt-accent);
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tt-space-2);
+  padding: var(--tt-space-3) var(--tt-space-4);
+  border-bottom: 1px solid var(--tt-border-subtle);
+}
+
+.chip {
+  padding: var(--tt-space-1) var(--tt-space-3);
+  border: none;
+  border-radius: var(--tt-radius-full);
+  font-size: var(--tt-text-xs);
+  color: var(--tt-text-secondary);
+  background: var(--tt-bg-tertiary);
+  cursor: pointer;
+  transition:
+    background var(--tt-transition-fast),
+    color var(--tt-transition-fast);
+}
+
+.chip.is-active {
+  color: var(--tt-accent);
+  background: var(--tt-accent-subtle);
+}
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

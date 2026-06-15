@@ -1,0 +1,100 @@
+@use 'layout' as m;
+
+// Shared pulse animation for skeleton/loading states.
+// Use with `animation: pulse 1.5s ease-in-out infinite`.
+@mixin pulse-keyframes {
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+}
+
+@mixin skeleton-row($height: 48px) {
+  height: $height;
+  border-radius: var(--tt-radius-sm);
+  @include m.squircle;
+  background: var(--tt-bg-tertiary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// ─── Staggered list appearance ──────────────────────────────────────────────
+
+@keyframes tt-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tt-appear-flat {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// Use on list items. Set --stagger-delay via [style.--stagger-delay] in @for.
+// stylelint-disable selector-class-pattern -- Public animation utility variants keep their legacy names.
+.tt-animate-in {
+  opacity: 0;
+  animation: tt-appear var(--tt-anim-appear) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+.tt-animate-in--flat {
+  opacity: 0;
+  animation: tt-appear-flat var(--tt-anim-appear) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-animate-in,
+  .tt-animate-in--flat {
+    opacity: 1;
+    animation: none;
+  }
+}
+// stylelint-enable selector-class-pattern
+
+// ─── Value change flash ──────────────────────────────────────────────────────
+
+@keyframes tt-flash-positive {
+  0%   { color: var(--tt-success); background: var(--tt-success-light); }
+  20%  { color: var(--tt-success); background: var(--tt-success-light); }
+  100% { color: inherit; background: transparent; }
+}
+
+@keyframes tt-flash-negative {
+  0%   { color: var(--tt-danger); background: var(--tt-danger-light); }
+  20%  { color: var(--tt-danger); background: var(--tt-danger-light); }
+  100% { color: inherit; background: transparent; }
+}
+
+// Add programmatically for 1s when value increases/decreases.
+.tt-flash-positive { animation: tt-flash-positive 1000ms ease-out forwards; }
+.tt-flash-negative { animation: tt-flash-negative 1000ms ease-out forwards; }
+
+// ─── Route-outlet enter ──────────────────────────────────────────────────────
+// Default class applied by the [ttOutletAnimate] directive on a <router-outlet>.
+// The directive toggles this class on the outlet's parent element only when
+// that specific outlet swaps its component — so navigations handled by a
+// deeper outlet, or query-param-only navigations, do not animate the wrong
+// shell. Each shell that wants a scoped transition just adds the directive.
+
+@keyframes tt-route-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.is-route-entering {
+  animation: tt-route-enter var(--tt-route-enter, 200ms) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes tt-route-enter {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
