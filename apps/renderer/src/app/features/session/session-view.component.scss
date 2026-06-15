@@ -178,6 +178,42 @@
   }
 }
 
+.waiting {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--tt-space-2);
+  padding: var(--tt-space-2) var(--tt-space-5);
+  font-size: var(--tt-text-xs);
+  color: var(--tt-success);
+  background: var(--tt-success-subtle);
+  border-top: 1px solid var(--tt-border-subtle);
+}
+
+.waiting .pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--tt-radius-full);
+  background: var(--tt-success);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waiting .pulse {
+    animation: none;
+  }
+}
+
 /* queued (scheduled) messages — sits between chat and composer */
 .queue {
   flex: none;
